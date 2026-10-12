@@ -2,6 +2,7 @@
 // short sentences, no jargon, tell them what to do.
 
 const HEADLINES = {
+  insecure_password: () => "This page isn't safe for passwords.",
   credential_phish: (brand) => brand
     ? `This page is pretending to be ${brand}.`
     : 'This page may be trying to steal your password.',
@@ -11,6 +12,8 @@ const HEADLINES = {
 };
 
 const ADVICE = {
+  insecure_password: () =>
+    "Your organization doesn't allow typing passwords into pages that aren't encrypted. The password boxes on this page are locked. If you need this site for work, contact IT.",
   credential_phish: (brand) => brand
     ? `Don't type your password or card number here. If you're worried about your ${brand} account, close this page and go to ${brand} the way you normally do.`
     : "Don't type your password, card number or any personal details here.",
@@ -44,6 +47,8 @@ const REASONS = {
   forced_fullscreen: 'It took over your whole screen.',
   risky_tld: 'The web address ending is often used by scam sites.',
   free_hosting: 'It\'s on a free website service that scammers often use.',
+  password_on_http_page: 'This page isn\'t encrypted (http), so a password typed here could be read by others.',
+  password_sent_over_http: 'This page would send your password without encryption (http).',
   brand_in_path: (d) => `The link mentions ${d}, but it doesn't go to ${d}'s website.`,
   brand_in_userinfo: (d) => `The web address starts with ${d}'s name to hide where it really goes.`,
   suspicious_words_in_domain: 'The web address uses words like "login" or "verify" to look official.',

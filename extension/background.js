@@ -78,7 +78,7 @@ async function evaluate(url, page, allowed) {
   const { userTrusted, blocklist } = await loadState();
   const verdict = decide({ url, page, userTrusted, blocklist });
   allowed ??= await sessionAllowed();
-  verdict.overridden = verdict.action !== VERDICT.ALLOW && allowed.includes(verdict.domain);
+  verdict.overridden = verdict.action !== VERDICT.ALLOW && !verdict.policy && allowed.includes(verdict.domain);
   return verdict;
 }
 
@@ -283,6 +283,7 @@ const handlers = {
   },
 
   async proceedAnyway(msg, sender) {
+    // Session allows never lift enterprise policy (see evaluate()).
     // A content script may only lift the warning for its own page.
     const target = fromExtensionPage(sender) ? msg.url : sender.url;
     await allowForSession(registrableDomain(normalizeHost(new URL(target).hostname)));

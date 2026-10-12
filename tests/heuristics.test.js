@@ -154,19 +154,63 @@ test('ordinary login page on an unknown site is allowed', () => {
   assert.equal(r.action, 'allow', JSON.stringify(r));
 });
 
-test('ordinary login page over plain http is allowed', () => {
+// --- enterprise policy: no passwords over http ------------------------------
+
+const withPassword = (url, extra = {}) => page({
+  url,
+  title: 'Sign in',
+  fields: { password: 1, card: 0, ssn: 0, giftCard: 0, otp: 0 },
+  forms: [{ actionHost: new URL(url).hostname, actionProtocol: new URL(url).protocol, hasPassword: true }],
+  ...extra,
+});
+
+test('policy: a password box on an http page is blocked, with no override', () => {
   const url = 'http://old-family-site.net/login';
+  const r = decide({ url, page: withPassword(url) });
+  assert.equal(r.action, 'block');
+  assert.equal(r.source, 'policy');
+  assert.equal(r.policy, true);
+  assert.equal(r.category, 'insecure_password');
+  assert.deepEqual(codes(r), ['password_on_http_page']);
+  assert.match(describe(r).headline, /isn't safe for passwords/);
+});
+
+test('policy beats trusted, user-trusted and internal destinations', () => {
+  for (const [url, userTrusted] of [
+    ['http://www.paypal.com/signin', []],
+    ['http://my-small-bank.com/login', ['my-small-bank.com']],
+    ['http://192.168.1.1/', []],
+    ['http://intranet/login', []],
+  ]) {
+    const r = decide({ url, page: withPassword(url), userTrusted });
+    assert.equal(r.action, 'block', url);
+    assert.equal(r.source, 'policy', url);
+  }
+});
+
+test('policy: an https page whose password form posts to http is blocked', () => {
+  const url = 'https://handmade-quilts.com/account';
   const r = decide({
     url,
-    page: page({
-      url,
-      title: 'Family photos - Sign in',
-      fields: { password: 1, card: 0, ssn: 0, giftCard: 0, otp: 0 },
-      forms: [{ actionHost: 'old-family-site.net', hasPassword: true }],
-      text: 'Sign in to see the family photo album.',
-    }),
+    page: withPassword(url, { forms: [{ actionHost: 'handmade-quilts.com', actionProtocol: 'http:', hasPassword: true }] }),
   });
-  assert.equal(r.action, 'allow', JSON.stringify(r));
+  assert.equal(r.source, 'policy');
+  assert.deepEqual(codes(r), ['password_sent_over_http']);
+});
+
+test('policy: a hidden password box on an http page still counts', () => {
+  const url = 'http://old-family-site.net/';
+  const r = decide({ url, page: page({ url, passwordInputs: 1 }) });
+  assert.equal(r.source, 'policy');
+});
+
+test('policy does not fire without a password, or on https', () => {
+  assert.notEqual(decide({ url: 'http://old-family-site.net/', page: page({ url: 'http://old-family-site.net/' }) }).source, 'policy');
+  const url = 'https://grandmas-recipes.com/login';
+  assert.equal(decide({ url, page: withPassword(url) }).action, 'allow');
+  // An http search form without a password on an https page is fine.
+  const r = decide({ url, page: page({ url, forms: [] }) });
+  assert.equal(r.action, 'allow');
 });
 
 test('online shop checkout on an unknown site is allowed', () => {

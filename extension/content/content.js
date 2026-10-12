@@ -28,6 +28,7 @@
 
   let state = {
     gated: false,        // destination gate sent this tab to the gate page
+    stayed: false,       // user chose to stay on a policy-blocked page (fields stay locked)
     verdict: null,       // last verdict from the background
     text: null,          // plain-language strings for it
     locked: false,       // sensitive inputs blocked until the user decides
@@ -158,10 +159,15 @@
     return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none';
   }
 
+  // Inputs that have ever been password boxes: "show password" buttons switch
+  // them to type=text, and they must stay protected.
+  const passwordFields = new WeakSet();
+
   /** Classify an input as a sensitive kind, or null. */
   function sensitiveKind(el) {
     if (!(el instanceof HTMLInputElement) || el.type === 'hidden') return null;
-    if (el.type === 'password') return 'password';
+    if (el.type === 'password') passwordFields.add(el);
+    if (passwordFields.has(el)) return 'password';
     const ac = (el.autocomplete || '').toLowerCase();
     const desc = describeInput(el);
     if (ac === 'one-time-code' || OTP_RE.test(desc)) return 'otp';
@@ -182,11 +188,8 @@
     for (const form of document.forms) {
       const hasPassword = !!form.querySelector('input[type=password]');
       if (!hasPassword) continue;
-      let actionHost = location.hostname;
-      try {
-        actionHost = new URL(form.getAttribute('action') || location.href, location.href).hostname;
-      } catch { /* keep page host */ }
-      forms.push({ actionHost, hasPassword });
+      const action = formAction(form);
+      forms.push({ actionHost: action?.hostname || location.hostname, actionProtocol: action?.protocol || location.protocol, hasPassword });
     }
 
     const meta = (sel) => document.querySelector(sel)?.getAttribute('content') || '';
@@ -201,6 +204,7 @@
 
     const text = (document.body?.innerText || '').slice(0, MAX_TEXT);
     return {
+      passwordInputs: document.querySelectorAll('input[type=password]').length,
       title: document.title.slice(0, 300),
       siteName: meta('meta[property="og:site_name"]') || meta('meta[name="application-name"]'),
       identityTexts: identityTexts.filter(Boolean),
@@ -224,7 +228,7 @@
     const risky = res.verdict.action !== 'allow' && !res.verdict.overridden;
     if (risky) {
       state.locked = true;
-      showOverlay();
+      if (!(res.verdict.policy && state.stayed)) showOverlay();
     } else {
       state.locked = false;
       removeOverlay();
@@ -234,23 +238,48 @@
   // -------------------------------------------------------------------------
   // Input guard: while locked, sensitive fields can't be focused or typed in.
 
+  function formAction(form) {
+    try {
+      return new URL(form.getAttribute('action') || location.href, location.href);
+    } catch {
+      return null;
+    }
+  }
+
+  // Enterprise policy, enforced here too so it doesn't wait on the
+  // background: no password into an http page or an http form target.
+  function violatesPasswordPolicy(el) {
+    if (sensitiveKind(el) !== 'password') return false;
+    return location.protocol === 'http:' || (el.form && formAction(el.form)?.protocol === 'http:');
+  }
+
+  function blocked(el) {
+    if (violatesPasswordPolicy(el)) {
+      // Make sure the verdict (and its overlay text) reflects the policy.
+      if (!state.verdict?.policy) analyze();
+      state.locked = true;
+      return true;
+    }
+    return state.locked && !!sensitiveKind(el);
+  }
+
   function onFocusIn(e) {
-    if (!state.locked || !sensitiveKind(e.target)) return;
+    if (!blocked(e.target)) return;
     e.target.blur();
     showOverlay();
   }
 
   function onKeyDown(e) {
-    if (!state.locked || !sensitiveKind(e.target)) return;
+    if (!blocked(e.target)) return;
     e.preventDefault();
     e.stopImmediatePropagation();
     showOverlay();
   }
 
   function onSubmit(e) {
-    if (!state.locked) return;
     const form = e.target;
-    if (form instanceof HTMLFormElement && [...form.elements].some((el) => sensitiveKind(el))) {
+    if (!(form instanceof HTMLFormElement)) return;
+    if ([...form.elements].some((el) => blocked(el))) {
       e.preventDefault();
       e.stopImmediatePropagation();
       showOverlay();
@@ -358,6 +387,28 @@
     onUserClick(safe, () => chrome.runtime.sendMessage({ type: 'goToSafety' }));
     card.appendChild(safe);
 
+    if (state.verdict.policy) {
+      // Enterprise policy: no override. The user may read the page, but the
+      // password boxes stay locked.
+      const stay = el('button', { class: 'continue', type: 'button' }, 'Stay on this page (password boxes stay locked)');
+      onUserClick(stay, () => {
+        state.stayed = true;
+        removeOverlay();
+      });
+      card.appendChild(stay);
+    } else {
+      appendContinue(card);
+    }
+
+    backdrop.appendChild(card);
+    root.appendChild(backdrop);
+    document.documentElement.appendChild(host);
+    state.overlay = host;
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    safe.focus();
+  }
+
+  function appendContinue(card) {
     const cont = el('button', { class: 'continue', type: 'button' }, 'I understand the risk');
     onUserClick(cont, () => {
       cont.remove();
@@ -376,13 +427,6 @@
       no.focus();
     });
     card.appendChild(cont);
-
-    backdrop.appendChild(card);
-    root.appendChild(backdrop);
-    document.documentElement.appendChild(host);
-    state.overlay = host;
-    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
-    safe.focus();
   }
 
   function removeOverlay() {

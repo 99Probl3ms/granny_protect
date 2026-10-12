@@ -1,5 +1,6 @@
 // Smoke test: page-level screening, the sensitive-input lock, the warning
-// overlay, and the block page for listed sites.
+// overlay, the enterprise no-passwords-over-http policy, and the block page
+// for listed sites.
 //
 //   npm run test:e2e
 
@@ -11,12 +12,15 @@ const { server, hits, port } = await startServer({
   'account-review-center.com': 'phish-paypal.html',
   'win-alert-9921.online': 'tech-support.html',
   'grandmas-recipes.com': 'benign-login.html',
+  'intranet': 'benign-login.html',
+  'handmade-quilts.com': 'form-to-http.html',
   'nice-looking-site.com': 'plain.html',
   'docs.google.com': 'plain.html',
 });
 const browser = await launch(port);
 const { context, worker, gatePageRe } = browser;
-const url = (host, p = '/') => `http://${host}${p}`;
+const url = (host, p = '/') => `https://${host}${p}`;
+const httpUrl = (host, p = '/') => `http://${host}${p}`;
 const overlayShown = (page) => page.evaluate(() => !!document.querySelector('[data-granny-protect]'));
 const { check, finish } = makeChecker();
 
@@ -76,11 +80,56 @@ await check('"I understand the risk" twice-confirmed unlocks the page', async ()
   await page.close();
 });
 
+// --- Enterprise policy: never a password over http ---------------------------
+
+/** Try to type into #pw the way a user would; returns what ended up in it. */
+async function tryTyping(page) {
+  await page.click('#pw', { force: true }).catch(() => {});
+  await page.keyboard.type('hunter2');
+  return page.inputValue('#pw');
+}
+
+await check('policy: http login page is locked and offers no way to continue', async () => {
+  const page = await context.newPage();
+  await page.goto(httpUrl('grandmas-recipes.com', '/login'));
+  await page.waitForSelector('[data-granny-protect]', { state: 'attached', timeout: 5000 });
+  // Focus starts on "Take me to safety"; the only other button is "Stay on
+  // this page", which removes the message but keeps the boxes locked.
+  const verdict = await worker.evaluate(async () => Object.values(await chrome.storage.session.get(null)).find((v) => v?.verdict?.policy)?.verdict);
+  assert.equal(verdict?.source, 'policy');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('[data-granny-protect]', { state: 'detached', timeout: 3000 });
+  assert.equal(await tryTyping(page), '', 'still locked after staying on the page');
+  await page.close();
+});
+
+await check('policy: applies to internal sites too', async () => {
+  const page = await context.newPage();
+  await page.goto(httpUrl('intranet', '/login'));
+  await page.waitForSelector('[data-granny-protect]', { state: 'attached', timeout: 5000 });
+  assert.equal(await tryTyping(page), '');
+  await page.close();
+});
+
+await check('policy: https page whose password form posts to http is locked, even after "show password"', async () => {
+  const page = await context.newPage();
+  await page.goto(url('handmade-quilts.com', '/account'));
+  await page.waitForSelector('[data-granny-protect]', { state: 'attached', timeout: 5000 });
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter'); // stay on the page
+  await page.waitForSelector('[data-granny-protect]', { state: 'detached', timeout: 3000 });
+  await page.click('#show'); // page turns the password box into a text box
+  assert.equal(await page.getAttribute('#pw', 'type'), 'text');
+  assert.equal(await tryTyping(page), '');
+  await page.close();
+});
+
 await installBlocklist(worker, ['http://nice-looking-site.com/', 'http://docs.google.com/forms/d/e/bad123/viewform']);
 
 await check('blocklisted site: block page shown and the site is never contacted', async () => {
   const page = await context.newPage();
-  await page.goto(url('nice-looking-site.com', '/some/page?x=1')).catch(() => {});
+  await page.goto(httpUrl('nice-looking-site.com', '/some/page?x=1')).catch(() => {});
   await page.waitForURL(gatePageRe, { timeout: 5000 });
   await page.waitForFunction(() => document.getElementById('reasons').children.length > 0);
   assert.match(await page.textContent('#headline'), /dangerous/i);
@@ -91,12 +140,12 @@ await check('blocklisted site: block page shown and the site is never contacted'
 
 await check('one bad page on a shared host is blocked, the rest of the host is not', async () => {
   const page = await context.newPage();
-  await page.goto(url('docs.google.com', '/forms/d/e/bad123/viewform?usp=sf_link')).catch(() => {});
+  await page.goto(httpUrl('docs.google.com', '/forms/d/e/bad123/viewform?usp=sf_link')).catch(() => {});
   await page.waitForURL(gatePageRe, { timeout: 5000 });
   assert.equal(hits['docs.google.com'] || 0, 0);
   await page.close();
   const other = await context.newPage();
-  await other.goto(url('docs.google.com', '/forms/d/e/fine456/viewform'));
+  await other.goto(httpUrl('docs.google.com', '/forms/d/e/fine456/viewform'));
   assert.ok(!other.url().startsWith('chrome-extension://'), other.url());
   assert.equal(hits['docs.google.com'], 1);
   await other.close();
@@ -104,7 +153,7 @@ await check('one bad page on a shared host is blocked, the rest of the host is n
 
 await check('"continue anyway" on the block page lets the user through', async () => {
   const page = await context.newPage();
-  await page.goto(url('nice-looking-site.com')).catch(() => {});
+  await page.goto(httpUrl('nice-looking-site.com')).catch(() => {});
   await page.waitForURL(gatePageRe, { timeout: 5000 });
   await page.waitForFunction(() => document.body.dataset.mode === 'block');
   await page.click('#continue');

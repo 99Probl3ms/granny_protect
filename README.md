@@ -26,6 +26,10 @@ they type a password, card number or gift-card code into a scam website.
   decides. Typed addresses, pop-ups and redirects are checked too.
 - **Locks sensitive fields** (password, card, Social Security number, gift-card
   code) on risky pages until the user deliberately chooses to continue.
+- **Never allows a password over http (enterprise policy).** Password boxes on
+  an unencrypted page, or in a form that would send to an unencrypted address,
+  are locked with no way to continue. This applies to every site, including
+  trusted, user-trusted and internal ones.
 - **Explains in plain words**, with one big **Take me to safety** button.
   Every site gets one of three decisions: **allow**, **needs review** (warning
   signs: one click continues) or **block** (known or near-certain scam:
@@ -94,6 +98,11 @@ e2e/                       Playwright tests: smoke test, navigation matrix, test
 
 ### How a decision is made
 
+0. **Enterprise policy** (`lib/policy.js`), once the page has loaded: a
+   password box on an `http` page, or a password form that posts to `http`:
+   block, with no override. Checked before everything below, so the trusted,
+   internal and "continue anyway" rules can't lift it. The content script also
+   enforces it directly the moment a password box is touched.
 1. **Internal?** `localhost`, private IP addresses, single-word hostnames and
    `.local` / `.lan` / `.internal` / `.corp` / `home.arpa`: allow.
 2. **Trusted?** A built-in popular or brand domain, or one the user trusts:
@@ -119,6 +128,7 @@ e2e/                       Playwright tests: smoke test, navigation matrix, test
 | Navigation and redirect checks | Typed addresses, `window.open`, script and meta redirects, server redirects | May be, but the page isn't shown |
 | Load-time check | Any page that slips past the above | Yes; page hidden as it starts |
 | Page screening | Risky page content | Yes; overlay and locked fields |
+| Password policy | Password boxes on `http` pages or posting to `http` | Yes; boxes locked, no override |
 
 Links are screened in the background as the page loads (and when links are
 added or change), so clicks on links already known to be safe aren't touched.

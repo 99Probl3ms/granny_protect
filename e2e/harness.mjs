@@ -2,6 +2,9 @@
 // fake hostnames, and Chromium with the unpacked extension loaded.
 
 import http from 'node:http';
+import https from 'node:https';
+import net from 'node:net';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -13,13 +16,27 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 export const extensionDir = path.resolve(here, '../extension');
 export const page = (name) => fs.readFileSync(path.join(here, 'pages', name));
 
+/** A throwaway self-signed certificate (the browser is told to accept it). */
+function selfSignedCert() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gp-cert-'));
+  const key = path.join(dir, 'key.pem');
+  const cert = path.join(dir, 'cert.pem');
+  execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1',
+    '-subj', '/CN=localhost', '-keyout', key, '-out', cert], { stdio: 'ignore' });
+  const pair = { key: fs.readFileSync(key), cert: fs.readFileSync(cert) };
+  fs.rmSync(dir, { recursive: true, force: true });
+  return pair;
+}
+
 /**
+ * Serves http and https on ONE port (the browser maps every hostname to it):
+ * a connection starting with a TLS handshake byte goes to the https server.
  * @param {Record<string, string | ((req, res, url: URL) => void)>} sites
  *   hostname -> test page file name, or a request handler
  */
 export async function startServer(sites) {
   const hits = {};
-  const server = http.createServer((req, res) => {
+  const handler = (req, res) => {
     const host = (req.headers.host || '').split(':')[0];
     if (req.url !== '/favicon.ico') hits[host] = (hits[host] || 0) + 1;
     const site = sites[host];
@@ -33,6 +50,16 @@ export async function startServer(sites) {
     }
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     res.end(page(site));
+  };
+  const plain = http.createServer(handler);
+  const secure = https.createServer(selfSignedCert(), handler);
+  const server = net.createServer((socket) => {
+    socket.once('data', (first) => {
+      socket.pause();
+      socket.unshift(first);
+      (first[0] === 0x16 ? secure : plain).emit('connection', socket);
+      process.nextTick(() => socket.resume());
+    });
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   return { server, hits, port: server.address().port };
@@ -44,7 +71,10 @@ export async function launch(port) {
   const context = await chromium.launchPersistentContext(userDataDir, {
     channel: 'chromium',
     headless: true,
+    ignoreHTTPSErrors: true,
     args: [
+      '--ignore-certificate-errors',
+      '--no-proxy-server',
       `--disable-extensions-except=${extensionDir}`,
       `--load-extension=${extensionDir}`,
       `--host-resolver-rules=MAP * 127.0.0.1:${port}`,

@@ -3,12 +3,14 @@
 //   needs_review  uncertain: hold the navigation / page until reviewed
 //                 (by the user now; by Jev in phase 2)
 //   block         known or near-certain scam
-// Hard rules (internal, trusted, blocklisted) always win; heuristic scores are
-// combined with noisy-OR and compared to thresholds.
+// Enterprise policy (lib/policy.js) comes first and can't be overridden. Then
+// hard rules (internal, trusted, blocklisted); heuristic scores are combined
+// with noisy-OR and compared to thresholds.
 
 import { isInternalHost, normalizeHost, registrableDomain } from './domain.js';
 import { isBlocklisted, isTrusted } from './lists.js';
 import { analyzePage } from './pageHeuristics.js';
+import { insecurePasswordViolation } from './policy.js';
 import { noisyOr } from './score.js';
 import { analyzeUrl } from './urlHeuristics.js';
 
@@ -20,8 +22,9 @@ export const VERDICT = { ALLOW: 'allow', REVIEW: 'needs_review', BLOCK: 'block' 
  * @typedef {Object} Verdict
  * @property {'allow'|'needs_review'|'block'} action
  * @property {number} risk
- * @property {'internal'|'trusted'|'blocklist'|'heuristics'} source
- * @property {'credential_phish'|'tech_support_scam'|'payment_scam'|'suspicious_site'|null} category
+ * @property {'policy'|'internal'|'trusted'|'blocklist'|'heuristics'} source
+ * @property {'insecure_password'|'credential_phish'|'tech_support_scam'|'payment_scam'|'suspicious_site'|null} category
+ * @property {boolean} [policy]          true when an enterprise rule decided; no override
  * @property {string|undefined} brand     brand being impersonated, if any
  * @property {{code:string, weight:number, detail?:string}[]} reasons
  * @property {string} domain              registrable domain the verdict is for
@@ -48,6 +51,15 @@ export function decide({ url, page, userTrusted = [], blocklist }) {
   const allow = (source) => ({ ...base, action: VERDICT.ALLOW, risk: 0, source, reasons: [] });
 
   if (!host) return allow('heuristics');
+
+  const violation = page && insecurePasswordViolation({ ...page, url });
+  if (violation) {
+    return {
+      ...base, action: VERDICT.BLOCK, risk: 1, source: 'policy', policy: true,
+      category: 'insecure_password', reasons: [violation],
+    };
+  }
+
   if (isInternalHost(host)) return allow('internal');
   if (isTrusted(host, userTrusted)) return allow('trusted');
   if (isBlocklisted(url, blocklist)) {
