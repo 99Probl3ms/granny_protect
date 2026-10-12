@@ -2,9 +2,9 @@
 
 import { allBrandDomains } from './brands.js';
 import { POPULAR_DOMAINS } from './trustedDomains.js';
-import { hostMatches, normalizeHost, registrableDomain } from './domain.js';
+import { hostMatches, normalizeHost } from './domain.js';
 
-const BUILTIN_TRUSTED = [...new Set([...allBrandDomains(), ...POPULAR_DOMAINS])];
+export const BUILTIN_TRUSTED = [...new Set([...allBrandDomains(), ...POPULAR_DOMAINS])];
 
 // Hosts where anyone can publish a page. They are never trusted, even when the
 // parent domain is (docs.google.com forms are a common phishing vehicle).
@@ -102,7 +102,10 @@ export function isBlocklisted(url, blocklist) {
   if (!norm) return false;
   if (blocklist.urls.has(norm)) return true;
   const host = norm.split('/')[0];
-  if (blocklist.hosts.has(host)) return true;
-  // Also match the registrable domain for hosts listed with a random subdomain.
-  return blocklist.hosts.has(registrableDomain(host));
+  // Match every parent, exactly as DNR requestDomains matches descendants.
+  const labels = host.split('.');
+  for (let i = 0; i < labels.length; i++) {
+    if (blocklist.hosts.has(labels.slice(i).join('.'))) return true;
+  }
+  return false;
 }

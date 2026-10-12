@@ -35,19 +35,21 @@ export function skeleton(text) {
   return out.replace(/rn/g, 'm').replace(/vv/g, 'w').replace(/-/g, '');
 }
 
+/** Edit distance where swapping two adjacent letters counts as one edit. */
 export function levenshtein(a, b) {
   if (a === b) return 0;
-  const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
   for (let i = 1; i <= a.length; i++) {
-    let diag = prev[0];
-    prev[0] = i;
     for (let j = 1; j <= b.length; j++) {
-      const tmp = prev[j];
-      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
-      diag = tmp;
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      }
     }
   }
-  return prev[b.length];
+  return d[a.length][b.length];
 }
 
 /** Is `host` one of the brand's own domains? */
@@ -64,6 +66,8 @@ const SUSPICIOUS_HOST_WORDS = [
   'login', 'signin', 'sign-in', 'logon', 'verify', 'verification', 'secure', 'security',
   'account', 'update', 'confirm', 'unlock', 'suspended', 'support', 'helpdesk', 'billing',
   'wallet', 'recovery', 'refund', 'invoice', 'webscr', 'authenticate', 'auth',
+  'alert', 'banking', 'delivery', 'parcel', 'package', 'tracking', 'customs',
+  'renewal', 'claim', 'reward', 'prize', 'payment',
 ];
 
 /**
@@ -88,7 +92,7 @@ export function analyzeUrl(url) {
 
   if (isIpHost(host)) {
     add('ip_address_host', 0.35);
-    return finish(reasons);
+    return finish(reasons, brandOutsideHost(u, host, add));
   }
 
   // "https://paypal.com@evil.example/" really goes to evil.example.
@@ -142,6 +146,8 @@ export function analyzeUrl(url) {
     add('domain_in_subdomain', 0.3);
   }
 
+  brandHit ??= brandOutsideHost(u, host, add);
+
   const tld = publicSuffix(host).split('.').pop();
   if (RISKY_TLDS.has(tld)) add('risky_tld', 0.15, tld);
   if (isShortener(host)) add('url_shortener', 0.1);
@@ -154,6 +160,36 @@ export function analyzeUrl(url) {
   if (susWords.length) add('suspicious_words_in_domain', susWords.length > 1 ? 0.2 : 0.1, susWords.join(','));
 
   return finish(reasons, brandHit);
+}
+
+/**
+ * Brand named in the path or before an "@" of a site the brand doesn't own:
+ * "sites.google.com/view/paypal-login", "https://paypal.com@evil.example/".
+ */
+function brandOutsideHost(u, host, add) {
+  const pathText = decodeSafe(u.pathname + u.search).toLowerCase();
+  const userinfo = decodeSafe(`${u.username}${u.password}`).toLowerCase();
+  for (const brand of BRANDS) {
+    if (isBrandHost(brand, host)) continue;
+    const kws = brand.keywords.filter((k) => k.length >= 4 && !COMMON_BRAND_WORDS.has(k));
+    if (userinfo && kws.some((k) => userinfo.includes(k))) {
+      add('brand_in_userinfo', 0.6, brand.name);
+      return brand.name;
+    }
+    if (kws.some((k) => new RegExp(`(^|[^a-z])${k}([^a-z]|$)`).test(pathText))) {
+      add('brand_in_path', isUserContentHost(host) ? 0.45 : 0.2, brand.name);
+      return brand.name;
+    }
+  }
+  return undefined;
+}
+
+function decodeSafe(s) {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
 }
 
 function finish(reasons, brand) {

@@ -7,7 +7,7 @@ function render(status) {
   const { verdict, text, domain, userTrusted } = status;
   $('domain').textContent = domain;
   const risky = verdict.action !== 'allow';
-  $('status').className = `status ${risky ? verdict.action : 'ok'}`;
+  $('status').className = `status ${risky ? (verdict.action === 'block' ? 'block' : 'warn') : 'ok'}`;
   $('icon').textContent = risky ? (verdict.action === 'block' ? '⛔' : '⚠️') : '✅';
 
   if (risky) {
@@ -16,6 +16,8 @@ function render(status) {
     $('advice').hidden = false;
     $('reasons').replaceChildren(...text.reasons.map((r) => Object.assign(document.createElement('li'), { textContent: r })));
     $('reasons').hidden = !text.reasons.length;
+  } else if (verdict.source === 'internal') {
+    $('headline').textContent = 'This is on your own network';
   } else if (verdict.source === 'trusted') {
     $('headline').textContent = userTrusted ? 'You trust this website' : 'This is a well-known website';
   } else {
@@ -24,7 +26,7 @@ function render(status) {
 
   // Only offer to trust sites we haven't flagged; trusting a flagged site
   // should be a deliberate act on the warning itself.
-  $('trust').hidden = !(verdict.action === 'allow' && verdict.source !== 'trusted');
+  $('trust').hidden = !(verdict.action === 'allow' && verdict.source === 'heuristics');
   $('untrust').hidden = !userTrusted;
 }
 
