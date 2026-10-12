@@ -45,6 +45,10 @@ function redactPath(pathname) {
   // Long opaque segments (tokens, ids) are replaced; words are kept because
   // paths like /signin or /verify-account are a useful signal.
   const segments = String(pathname || '/').split('/').map((seg) => {
+    // Decode once before matching personal data. Drop ambiguous/malformed
+    // encodings rather than forwarding a potentially encoded identifier.
+    try { seg = decodeURIComponent(seg); } catch { return '*'; }
+    if (seg.includes('%')) return '*';
     if (seg.length > 24 || /\d{4,}/.test(seg) || /^[A-Za-z0-9_-]{16,}$/.test(seg)) return '*';
     return redactText(seg);
   });

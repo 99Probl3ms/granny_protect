@@ -7,7 +7,7 @@
 
 import { sanitizeSummary } from '../../extension/lib/summary.js';
 
-const MAX_BODY_BYTES = 32 * 1024;
+import { MAX_BODY_BYTES, BodyTooLargeError, readBody } from './body.js';
 const INSTALL_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** Fixed-window rate limit per key. In-memory, so per process / isolate. */
@@ -63,8 +63,13 @@ export function createHandler({ model, disabled = false, ratePerMinute = 60, log
 
     const declared = Number(request.headers.get('content-length') || 0);
     if (declared > MAX_BODY_BYTES) return json(413, { error: 'too_large' });
-    const raw = await request.text();
-    if (raw.length > MAX_BODY_BYTES) return json(413, { error: 'too_large' });
+    let raw;
+    try {
+      raw = await readBody(request.body);
+    } catch (err) {
+      if (err instanceof BodyTooLargeError) return json(413, { error: 'too_large' });
+      throw err;
+    }
 
     let summary;
     try {

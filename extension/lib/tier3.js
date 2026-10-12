@@ -21,9 +21,9 @@ const DISABLED_BACKOFF_MS = 10 * 60 * 1000;
  * @param {() => number} [deps.now]
  */
 export function createTier3({ getBackendUrl, classify, grayZoneOnly, grayZone, waitMs, now = Date.now }) {
-  /** @type {Map<string, {at:number, promise:Promise<any>}>} */
-  const cache = new Map();
-  let pausedUntil = 0;
+  let activeBackend;
+  /** @type {{cache: Map<string, {at:number, promise:Promise<any>}>, pausedUntil: number}} */
+  let state = { cache: new Map(), pausedUntil: 0 };
 
   /** Should this verdict be sent to the model at all? */
   function eligible(verdict) {
@@ -32,7 +32,7 @@ export function createTier3({ getBackendUrl, classify, grayZoneOnly, grayZone, w
     return verdict.risk >= grayZone.min && verdict.risk < grayZone.max;
   }
 
-  function lookup(key) {
+  function lookup(key, { cache }) {
     const hit = cache.get(key);
     if (!hit) return null;
     if (now() - hit.at > CACHE_TTL_MS) {
@@ -44,10 +44,11 @@ export function createTier3({ getBackendUrl, classify, grayZoneOnly, grayZone, w
     return hit.promise;
   }
 
-  function start(key, summary, backendUrl) {
+  function start(key, summary, backendUrl, endpointState) {
+    const { cache } = endpointState;
     const promise = classify(summary, backendUrl).catch((err) => {
       cache.delete(key);
-      pausedUntil = now() + (err instanceof ModelDisabledError ? DISABLED_BACKOFF_MS : ERROR_BACKOFF_MS);
+      endpointState.pausedUntil = now() + (err instanceof ModelDisabledError ? DISABLED_BACKOFF_MS : ERROR_BACKOFF_MS);
       console.warn('granny_protect: Tier 3 unavailable', err?.message || err);
       return null;
     });
@@ -65,9 +66,13 @@ export function createTier3({ getBackendUrl, classify, grayZoneOnly, grayZone, w
    * @param {import('./fusion.js').Verdict} verdict
    */
   async function ask(url, page, verdict) {
-    if (!page || !eligible(verdict) || now() < pausedUntil) return null;
+    if (!page || !eligible(verdict)) return null;
     const backendUrl = await getBackendUrl();
-    if (!backendUrl) return null;
+    if (backendUrl !== activeBackend) {
+      activeBackend = backendUrl;
+      state = { cache: new Map(), pausedUntil: 0 };
+    }
+    if (!backendUrl || now() < state.pausedUntil) return null;
 
     let summary;
     try {
@@ -76,7 +81,7 @@ export function createTier3({ getBackendUrl, classify, grayZoneOnly, grayZone, w
       return null;
     }
     const key = JSON.stringify(summary);
-    const promise = lookup(key) ?? start(key, summary, backendUrl);
+    const promise = lookup(key, state) ?? start(key, summary, backendUrl, state);
     let timer;
     const timeout = new Promise((resolve) => { timer = setTimeout(() => resolve(null), waitMs); });
     try {

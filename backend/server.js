@@ -12,7 +12,7 @@
 //   DECISION_LOG      file to append decision log lines to (JSON lines); default stdout
 //   PORT              default 8787
 
-import http from 'node:http';
+import { createNodeServer } from './src/nodeServer.js';
 import fs from 'node:fs';
 import { createHandler } from './src/handler.js';
 import { createJevModel, jevConfigFromEnv } from './src/jev.js';
@@ -31,28 +31,7 @@ const handle = createHandler({
   log: (entry) => logStream.write(`${JSON.stringify(entry)}\n`),
 });
 
-function pick(headers, names) {
-  return Object.fromEntries(names.filter((n) => headers[n] != null).map((n) => [n, headers[n]]));
-}
-
-const server = http.createServer(async (req, res) => {
-  try {
-    const chunks = [];
-    for await (const c of req) chunks.push(c);
-    const body = chunks.length ? Buffer.concat(chunks) : undefined;
-    const request = new Request(`http://${req.headers.host || 'localhost'}${req.url}`, {
-      method: req.method,
-      headers: pick(req.headers, ['content-type', 'content-length', 'x-install-id']),
-      body: req.method === 'GET' || req.method === 'HEAD' ? undefined : body,
-    });
-    const response = await handle(request);
-    res.writeHead(response.status, Object.fromEntries(response.headers));
-    res.end(Buffer.from(await response.arrayBuffer()));
-  } catch (err) {
-    console.error(err);
-    res.writeHead(500).end();
-  }
-});
+const server = createNodeServer(handle);
 
 const port = Number(env.PORT) || 8787;
 server.listen(port, () => console.error(`granny_protect backend on http://localhost:${port} (tier3 ${jev ? `on: ${jev.provider} ${jev.model}` : 'off'})`));

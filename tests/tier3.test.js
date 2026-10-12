@@ -337,3 +337,72 @@ test('rate limiter resets each window', () => {
   t = 1000;
   assert.equal(allow('a'), true);
 });
+
+test('encoded path personal data is redacted on both sides, including malformed encodings', () => {
+  for (const segment of ['jane%40example.com', '%31%32%33%34%35%36', 'jane%2540example.com', 'jane%ZZ@example.com']) {
+    const url = `https://example-site.com/account/${segment}`;
+    const summary = buildSummary(url, page(), heuristicVerdict(0));
+    for (const s of [summary, sanitizeSummary({ url_host: 'example-site.com', url_path: `/account/${segment}` }), sanitizeSummary(summary)]) {
+      assert.doesNotMatch(s.url_path, /jane|example\.com|123456|%/);
+    }
+  }
+  assert.equal(sanitizeSummary({ url_host: 'a.com', url_path: '/verify%2Daccount/signin' }).url_path, '/verify-account/signin');
+});
+
+test('backend changes invalidate verdicts and backoff', async () => {
+  let endpoint = 'https://old.example';
+  const calls = [];
+  const { t3 } = tier3With(async (_, backend) => {
+    calls.push(backend);
+    if (backend === 'https://disabled.example') throw new ModelDisabledError('off');
+    return modelResult(backend === 'https://old.example' ? 0 : 1);
+  }, { getBackendUrl: async () => endpoint });
+  const p = page(), v = heuristicVerdict(0);
+  assert.equal((await t3.ask(p.url, p, v)).p_phish, 0);
+  endpoint = 'https://new.example';
+  assert.equal((await t3.ask(p.url, p, v)).p_phish, 1);
+  endpoint = 'https://disabled.example';
+  assert.equal(await t3.ask(p.url, p, v), null);
+  endpoint = 'https://new.example';
+  assert.equal((await t3.ask(p.url, p, v)).p_phish, 1);
+  await t3.ask(p.url, p, v);
+  assert.equal(calls.length, 4);
+});
+
+test('an old in-flight failure cannot erase or pause a new backend verdict', async () => {
+  let endpoint = 'https://old.example', rejectOld;
+  let calls = 0;
+  const { t3 } = tier3With((_, backend) => {
+    calls++;
+    return backend === 'https://old.example'
+      ? new Promise((_, reject) => { rejectOld = reject; })
+      : Promise.resolve(modelResult(1));
+  }, { getBackendUrl: async () => endpoint });
+  const p = page(), v = heuristicVerdict(0);
+  const old = t3.ask(p.url, p, v);
+  await new Promise((r) => setImmediate(r));
+  endpoint = 'https://new.example';
+  assert.equal((await t3.ask(p.url, p, v)).p_phish, 1);
+  rejectOld(new Error('old backend down'));
+  assert.equal(await old, null);
+  assert.equal((await t3.ask(p.url, p, v)).p_phish, 1);
+  assert.equal(calls, 2);
+});
+
+test('backend limits streamed bytes and cancels before reading the entire body', async () => {
+  let pulled = 0, cancelled = false;
+  const handle = createHandler({ model: { classify: async () => assert.fail('oversized request classified') } });
+  const stream = new ReadableStream({
+    pull(controller) { pulled++; controller.enqueue(new Uint8Array(8192)); },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  const response = await handle(new Request('http://backend.test/classify', {
+    method: 'POST', headers: { 'x-install-id': INSTALL_ID }, body: stream, duplex: 'half',
+  }));
+  assert.equal(response.status, 413);
+  assert.equal(pulled, 5);
+  assert.equal(cancelled, true);
+  const multiByte = JSON.stringify({ summary: { url_host: 'a.com', visible_text_excerpt: 'é'.repeat(20000) } });
+  assert.ok(multiByte.length < 32768);
+  assert.equal((await handle(classifyRequest(multiByte))).status, 413);
+});
