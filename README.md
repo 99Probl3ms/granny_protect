@@ -203,6 +203,11 @@ The labels cover phishing, benign lookalikes, prompt injection and sparse
 URL-only evidence. These are development cases, not an independent accuracy
 benchmark; see [the measured comparison](docs/jev-prompt-evaluation.md).
 
+For URLhaus malware-download and Phishing.Database phishing corpora, see
+[threat dataset construction and evaluation](docs/threat-datasets.md).
+`eval:jev -- --dataset PATH --dry-run` validates a JSONL corpus and reports
+its call budget without contacting Jev.
+
 The destination test set (`tests/fixtures/destinations.js`) holds malicious,
 benign and internal addresses with the decision each should get. Malicious
 ones that address checks can't catch are marked as known misses.

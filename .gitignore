@@ -1,2 +1,5 @@
 node_modules/
 *.zip
+
+# Downloaded threat intelligence and generated local evaluation snapshots
+data/
