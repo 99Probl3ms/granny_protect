@@ -186,6 +186,7 @@ npm run test:policy # DOM-level password-policy regression tests (Playwright)
 npm run eval        # confusion matrix for the destination test set
 npm run test:e2e    # loads the extension in Chromium: smoke test, navigation matrix, review flows
 TYPESAFE_API_KEY=... npm run test:jev   # same browser setup against the real Jev (network, a few calls)
+TYPESAFE_API_KEY=... npm run eval:jev -- data.csv   # Jev accuracy on your own labelled "url,label" list (one call per line)
 ```
 
 `test:e2e` reviews with a stand-in model and needs no key or network.
