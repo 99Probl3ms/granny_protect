@@ -98,22 +98,56 @@ export function buildBlockRules(blocklist, blockPageUrl, userTrusted = []) {
 }
 
 /**
- * Would the rules from buildBlockRules() redirect this URL? Used so the
- * webNavigation fallback doesn't redirect a second time.
+ * Chrome limits compiled regex memory, not pattern length. Ask its RE2
+ * compiler before the atomic update so one rejected URL cannot invalidate
+ * every host rule. Capture support is needed for the redirect's \0.
  */
-export function coveredByRules(url, blocklist, userTrusted = []) {
+export async function supportedBlockRules(rules, isRegexSupported) {
+  const addRules = [];
+  const skippedRuleIds = [];
+  const support = new Map();
+  for (const rule of rules) {
+    const regex = rule.condition.regexFilter;
+    const isCaseSensitive = rule.condition.isUrlFilterCaseSensitive ?? false;
+    const key = JSON.stringify([regex, isCaseSensitive]);
+    let supported = support.get(key);
+    if (supported === undefined) {
+      const result = await isRegexSupported({
+        regex,
+        isCaseSensitive,
+        requireCapturing: true,
+      });
+      supported = result.isSupported;
+      support.set(key, supported);
+    }
+    if (supported) addRules.push(rule);
+    else skippedRuleIds.push(rule.id);
+  }
+  return { addRules, skippedRuleIds };
+}
+
+/**
+ * Would the rules from buildBlockRules() redirect this URL? Used so the
+ * webNavigation fallback doesn't redirect a second time. Compiler-rejected
+ * rules are excluded so their destinations still use the fallback.
+ */
+export function coveredByRules(url, blocklist, userTrusted = [], skippedRuleIds = []) {
   let u;
   try {
     u = new URL(url);
   } catch {
     return false;
   }
-  const { hostSet, urls } = entries(blocklist, userTrusted);
+  const { hosts, hostSet, urls } = entries(blocklist, userTrusted);
+  const skipped = new Set(skippedRuleIds);
   const host = normalizeHost(u.hostname);
   if (isInternalHost(host) || isTrusted(host, userTrusted)) return false;
-  if (inHostSet(host, hostSet)) return true;
+  if (inHostSet(host, hostSet) && hosts.some((domain, index) =>
+    (host === domain || host.endsWith('.' + domain)) &&
+    !skipped.has(Math.floor(index / DOMAINS_PER_RULE) + 1))) return true;
   const norm = `${host}${u.pathname.replace(/\/+$/, '')}`;
-  return urls.includes(norm);
+  const index = urls.indexOf(norm);
+  return index >= 0 && !skipped.has(Math.ceil(hosts.length / DOMAINS_PER_RULE) + index + 1);
 }
 
 /** Session rule that lets the user through to a domain they chose to visit. */

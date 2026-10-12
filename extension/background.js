@@ -22,7 +22,7 @@ import { buildBlocklist } from './lib/lists.js';
 import { decide, VERDICT } from './lib/fusion.js';
 import { describe } from './lib/messages.js';
 import { normalizeHost, registrableDomain } from './lib/domain.js';
-import { allowRule, buildBlockRules, coveredByRules } from './lib/dnrRules.js';
+import { allowRule, buildBlockRules, coveredByRules, supportedBlockRules } from './lib/dnrRules.js';
 import { buildReviewRequest } from './lib/sanitize.js';
 import { applyReview, createReviewer } from './lib/reviewClient.js';
 
@@ -133,13 +133,18 @@ function syncBlockRules() {
 async function doSyncBlockRules() {
   try {
     const { userTrusted, blocklist } = await loadState();
-    const addRules = buildBlockRules(blocklist, chrome.runtime.getURL(GATE_PAGE), userTrusted);
+    const candidates = buildBlockRules(blocklist, chrome.runtime.getURL(GATE_PAGE), userTrusted);
+    const { addRules, skippedRuleIds } = await supportedBlockRules(candidates,
+      (options) => chrome.declarativeNetRequest.isRegexSupported(options));
     const existing = await chrome.declarativeNetRequest.getDynamicRules();
     await chrome.declarativeNetRequest.updateDynamicRules({
       removeRuleIds: existing.map((r) => r.id),
       addRules,
     });
-    await chrome.storage.session.set({ dnrReady: true });
+    await chrome.storage.session.set({ dnrReady: true, dnrSkippedRuleIds: skippedRuleIds });
+    if (skippedRuleIds.length) {
+      console.warn(`granny_protect: ${skippedRuleIds.length} block rule(s) exceed Chrome's regex limits; using navigation gates for those entries`);
+    }
   } catch (err) {
     // The navigation checks below still gate listed sites.
     console.warn('granny_protect: could not install block rules', err);
@@ -150,10 +155,10 @@ async function doSyncBlockRules() {
 /** Will a declarativeNetRequest rule already redirect this URL? */
 async function handledByRules(url, verdict) {
   if (verdict.source !== 'blocklist') return false;
-  const { dnrReady = false } = await chrome.storage.session.get('dnrReady');
+  const { dnrReady = false, dnrSkippedRuleIds = [] } = await chrome.storage.session.get(['dnrReady', 'dnrSkippedRuleIds']);
   if (!dnrReady) return false;
   const { blocklist, userTrusted } = await loadState();
-  return coveredByRules(url, blocklist, userTrusted);
+  return coveredByRules(url, blocklist, userTrusted, dnrSkippedRuleIds);
 }
 
 // ---------------------------------------------------------------------------
