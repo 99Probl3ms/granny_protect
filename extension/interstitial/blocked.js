@@ -1,4 +1,6 @@
-const target = new URLSearchParams(location.search).get('url') || '';
+// The address arrives as ?url=... from the background script, or after the
+// '#' from a declarativeNetRequest redirect rule.
+const target = new URLSearchParams(location.search).get('url') || location.hash.slice(1);
 const $ = (id) => document.getElementById(id);
 
 function goToSafety() {

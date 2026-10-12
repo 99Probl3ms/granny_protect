@@ -1,11 +1,13 @@
 // Service worker: owns lists and verdicts. Content scripts send page features
-// here; we decide and reply. Navigations to known-bad sites are redirected to
-// the block page before the site loads.
+// here; we decide and reply. Known scam sites are redirected to the block page
+// by declarativeNetRequest rules before any request is sent; a webNavigation
+// check covers anything the rules don't.
 
 import { buildBlocklist } from './lib/lists.js';
 import { decide, VERDICT } from './lib/fusion.js';
 import { describe } from './lib/messages.js';
 import { normalizeHost, registrableDomain } from './lib/domain.js';
+import { allowRule, buildBlockRules, coveredByRules } from './lib/dnrRules.js';
 
 const FEED_URL = 'https://openphish.com/feed.txt';
 const FEED_ALARM = 'refresh-blocklist';
@@ -30,8 +32,45 @@ function invalidateState() {
 }
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && (changes.userTrusted || changes.feedUrls)) invalidateState();
+  if (area === 'local' && (changes.userTrusted || changes.feedUrls)) {
+    invalidateState();
+    syncBlockRules();
+  }
 });
+
+// ---------------------------------------------------------------------------
+// declarativeNetRequest: block known scam sites before the request is sent.
+
+const BLOCK_PAGE = 'interstitial/blocked.html';
+
+// Runs one at a time: overlapping updates would collide on rule ids.
+let syncQueue = Promise.resolve();
+function syncBlockRules() {
+  syncQueue = syncQueue.then(doSyncBlockRules);
+  return syncQueue;
+}
+
+async function doSyncBlockRules() {
+  try {
+    const { userTrusted, blocklist } = await loadState();
+    const addRules = buildBlockRules(blocklist, chrome.runtime.getURL(BLOCK_PAGE), userTrusted);
+    const existing = await chrome.declarativeNetRequest.getDynamicRules();
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: existing.map((r) => r.id),
+      addRules,
+    });
+    await chrome.storage.session.set({ dnrReady: true });
+  } catch (err) {
+    // The webNavigation fallback below still blocks listed sites.
+    console.warn('granny_protect: could not install block rules', err);
+    await chrome.storage.session.set({ dnrReady: false });
+  }
+}
+
+async function dnrReady() {
+  const { dnrReady: ready = false } = await chrome.storage.session.get('dnrReady');
+  return ready;
+}
 
 /** Domains the user chose to visit anyway this browser session. */
 async function sessionAllowed() {
@@ -41,7 +80,14 @@ async function sessionAllowed() {
 
 async function allowForSession(domain) {
   const list = await sessionAllowed();
-  if (!list.includes(domain)) await chrome.storage.session.set({ allowedDomains: [...list, domain] });
+  if (list.includes(domain)) return;
+  const allowedDomains = [...list, domain];
+  // Session rules outrank the block rules and are cleared with the session.
+  await chrome.declarativeNetRequest.updateSessionRules({
+    removeRuleIds: [allowedDomains.length],
+    addRules: [allowRule(allowedDomains.length, domain)],
+  });
+  await chrome.storage.session.set({ allowedDomains });
 }
 
 async function evaluate(url, page) {
@@ -69,8 +115,11 @@ async function refreshBlocklist() {
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   chrome.alarms.create(FEED_ALARM, { periodInMinutes: FEED_REFRESH_MINUTES, delayInMinutes: 1 });
   if (reason === 'install') chrome.tabs.create({ url: chrome.runtime.getURL('onboarding/onboarding.html') });
+  await syncBlockRules();
   refreshBlocklist();
 });
+
+chrome.runtime.onStartup.addListener(() => syncBlockRules());
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === FEED_ALARM) refreshBlocklist();
@@ -93,14 +142,20 @@ async function rememberVerdict(tabId, url, verdict) {
 chrome.tabs.onRemoved.addListener((tabId) => chrome.storage.session.remove(`tab:${tabId}`));
 
 // ---------------------------------------------------------------------------
-// Before the page loads: URL + lists only.
+// Before the page loads: URL + lists only. Listed sites are normally already
+// redirected by the declarativeNetRequest rules; this catches the rest
+// (entries over the rule limit, failed rule installs) and very risky URLs.
 
 chrome.webNavigation.onBeforeNavigate.addListener(async ({ tabId, frameId, url }) => {
   if (frameId !== 0 || !/^https?:/.test(url)) return;
   const verdict = await evaluate(url);
   if (verdict.action !== VERDICT.BLOCK || verdict.overridden) return;
+  if (verdict.source === 'blocklist' && await dnrReady()) {
+    const { blocklist, userTrusted } = await loadState();
+    if (coveredByRules(url, blocklist, userTrusted)) return;
+  }
   await rememberVerdict(tabId, url, verdict);
-  const blockPage = chrome.runtime.getURL(`interstitial/blocked.html?url=${encodeURIComponent(url)}`);
+  const blockPage = chrome.runtime.getURL(`${BLOCK_PAGE}?url=${encodeURIComponent(url)}`);
   chrome.tabs.update(tabId, { url: blockPage });
 });
 

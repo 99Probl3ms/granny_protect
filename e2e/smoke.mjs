@@ -23,10 +23,13 @@ const SITES = {
   'grandmas-recipes.com': 'benign-login.html',
   'win-alert-9921.online': 'tech-support.html',
   'nice-looking-site.com': 'plain.html',
+  'docs.google.com': 'plain.html',
 };
 
+const hits = {};
 const server = http.createServer((req, res) => {
   const host = (req.headers.host || '').split(':')[0];
+  if (req.url !== '/favicon.ico') hits[host] = (hits[host] || 0) + 1;
   const file = SITES[host];
   if (!file) {
     res.writeHead(404).end();
@@ -72,6 +75,7 @@ try {
   for (const p of context.pages()) if (p.url().includes('onboarding')) await p.close();
 
   const url = (host, p = '/') => `http://${host}${p}`;
+  const blockPageRe = new RegExp(`^chrome-extension://${extId}/interstitial/blocked\\.html`);
 
   await check('phishing login page: warning shown, password field locked', async () => {
     const page = await context.newPage();
@@ -129,14 +133,50 @@ try {
     await page.close();
   });
 
-  await check('blocklisted site: redirected to block page before loading', async () => {
-    await worker.evaluate(() => chrome.storage.local.set({ feedUrls: ['http://nice-looking-site.com/'] }));
+  // Install a blocklist and wait for the declarativeNetRequest rules.
+  await worker.evaluate(() => chrome.storage.local.set({
+    feedUrls: ['http://nice-looking-site.com/', 'http://docs.google.com/forms/d/e/bad123/viewform'],
+  }));
+  await worker.evaluate(async () => {
+    for (let i = 0; i < 50; i++) {
+      if ((await chrome.declarativeNetRequest.getDynamicRules()).length >= 2) return;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    throw new Error('block rules were not installed');
+  });
+
+  await check('blocklisted site: block page shown and the site is never contacted', async () => {
+    const page = await context.newPage();
+    await page.goto(url('nice-looking-site.com', '/some/page?x=1')).catch(() => {});
+    await page.waitForURL(blockPageRe, { timeout: 5000 });
+    await page.waitForFunction(() => document.getElementById('reasons').children.length > 0);
+    assert.match(await page.textContent('#headline'), /dangerous/i);
+    assert.equal(await page.textContent('#address'), 'http://nice-looking-site.com/some/page?x=1');
+    assert.equal(hits['nice-looking-site.com'] || 0, 0, 'server must not receive the request');
+    await page.close();
+  });
+
+  await check('one bad page on a shared host is blocked, the rest of the host is not', async () => {
+    const page = await context.newPage();
+    await page.goto(url('docs.google.com', '/forms/d/e/bad123/viewform?usp=sf_link')).catch(() => {});
+    await page.waitForURL(blockPageRe, { timeout: 5000 });
+    assert.equal(hits['docs.google.com'] || 0, 0);
+    await page.close();
+    const other = await context.newPage();
+    await other.goto(url('docs.google.com', '/forms/d/e/fine456/viewform'));
+    assert.ok(!other.url().startsWith('chrome-extension://'), other.url());
+    assert.equal(hits['docs.google.com'], 1);
+    await other.close();
+  });
+
+  await check('"continue anyway" on the block page lets the user through', async () => {
     const page = await context.newPage();
     await page.goto(url('nice-looking-site.com')).catch(() => {});
-    await page.waitForURL(`chrome-extension://${extId}/interstitial/blocked.html*`, { timeout: 5000 });
-    await page.waitForFunction(() => document.getElementById('reasons').children.length > 0);
-    const headline = await page.textContent('#headline');
-    assert.match(headline, /dangerous/i);
+    await page.waitForURL(blockPageRe, { timeout: 5000 });
+    await page.click('#continue');
+    await page.click('#yes');
+    await page.waitForURL('http://nice-looking-site.com/', { timeout: 5000 });
+    assert.equal(hits['nice-looking-site.com'], 1);
     await page.close();
   });
 } finally {

@@ -10,7 +10,9 @@ they type a password, card number or gift-card code into a scam website.
 ## What it does
 
 - **Blocks known scam sites before they load.** Uses the public
-  [OpenPhish](https://openphish.com/) feed, refreshed every 12 hours.
+  [OpenPhish](https://openphish.com/) feed, refreshed every 12 hours. Chrome
+  redirects listed sites to a block page before any request is sent, so the
+  scam site never hears from the user's browser.
 - **Spots fake web addresses:** look-alike letters (`pаypal.com` with a
   Cyrillic "а"), misspelled brands (`paypa1.com`, `amazom.com`), and brand names
   inside someone else's address (`paypal.com.secure-login.xyz`).
@@ -72,6 +74,7 @@ extension/
     ├── brands.js          impersonated brands and their real domains
     ├── trustedDomains.js  popular sites that are never flagged
     ├── lists.js           trusted / user-content / blocklist matching
+    ├── dnrRules.js        blocklist → Chrome declarativeNetRequest redirect rules
     ├── urlHeuristics.js   web address checks
     ├── pageHeuristics.js  page content checks
     ├── fusion.js          combines checks into allow / warn / block
@@ -86,7 +89,12 @@ e2e/                       Playwright smoke test and test pages
 1. **Trusted?** A built-in popular or brand domain, or one the user trusts:
    allow. Hosts where anyone can publish (Google Forms, SharePoint,
    `*.web.app`, ...) are never trusted.
-2. **Blocklisted?** Block.
+2. **Blocklisted?** Block. Listed sites are turned into Chrome
+   `declarativeNetRequest` redirect rules (`lib/dnrRules.js`), so the browser
+   goes straight to the block page without contacting the site. Listed domains
+   share a few rules. A single bad page on a shared host, such as one Google
+   Form, gets its own rule, up to 900 of them. Anything over that limit is
+   caught by a navigation check instead.
 3. **Otherwise** each check adds a weighted signal. Signals are combined as
    `1 − Π(1 − weight)`. A score of **0.6** or more warns, **0.85** or more
    blocks. The web address alone is checked before the page loads, and page
@@ -125,6 +133,8 @@ It serves local test pages under fake hostnames (such as
 - No domain-age check yet, which would need a backend.
 - A determined page can still hide the warning overlay. Sensitive fields stay
   locked anyway.
+- The block page has to be reachable from websites so Chrome can redirect to
+  it, which lets a site detect that the extension is installed.
 - Chrome and Edge only for now.
 
 ## Roadmap
