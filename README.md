@@ -105,6 +105,8 @@ extension/
 server/                    review service: holds the Jev key, re-sanitizes, calls Jev
 tests/                     unit tests (node:test) and the destination test set
 scripts/eval.mjs           confusion matrix for the destination test set
+scripts/eval-jev.mjs       Jev on the URLhaus + Tranco set (eval/urlhaus-jev.json)
+scripts/build-urlhaus-dataset.mjs  builds that set from the feeds
 e2e/                       Playwright tests: smoke test, navigation matrix, test pages
 ```
 
@@ -197,6 +199,41 @@ blocked from its content. It skips itself when no key is set.
 The destination test set (`tests/fixtures/destinations.js`) holds malicious,
 benign and internal addresses with the decision each should get. Malicious
 ones that address checks can't catch are marked as known misses.
+
+### Evaluating Jev on URLhaus
+
+`eval/urlhaus-jev.json` is a labelled set of 405 URLs for measuring Jev both
+ways:
+
+- **200 malicious** from [URLhaus](https://urlhaus.abuse.ch/) (malware
+  downloads), in fixed quotas so the IoT-botnet IPs and raw GitHub payloads
+  that dominate the feed don't swamp it: IP hosts 40, code hosting 40, file
+  sharing 30, free/dynamic hosts 30, dedicated domains 60. At most one or two
+  URLs per host or repo owner.
+- **205 benign**: 160 domains from the [Tranco](https://tranco-list.eu/) top
+  list (60 from the top 1k, 50 from 1k–10k, 50 from 10k–100k; domains that
+  URLhaus lists are skipped) and 45 real software downloads and install
+  scripts on GitHub, raw GitHub, GitLab, Dropbox and vendor sites, so a
+  model can't score well just by flagging every `.exe` or GitHub link.
+
+```sh
+TYPESAFE_API_KEY=... npm run eval:jev                 # all 405 (one Jev call each)
+TYPESAFE_API_KEY=... npm run eval:jev -- --limit 20   # a quick sample across every stratum
+```
+
+Each URL takes the extension's path (local decision, sanitized request, the
+review service's re-sanitization) to the real Jev adapter, address only.
+Results go to `eval/results/` (git-ignored), and the report shows decisions
+by label and by stratum. Behind a proxy, add `NODE_USE_ENV_PROXY=1`.
+
+The malicious URLs are live malware links: don't open them. To rebuild the
+set from fresh feeds:
+
+```sh
+curl -sSLo urlhaus.csv https://urlhaus.abuse.ch/downloads/csv_recent/
+curl -sSLo tranco.zip https://tranco-list.eu/top-1m.csv.zip && unzip tranco.zip
+npm run eval:build-urlhaus -- --urlhaus urlhaus.csv --tranco top-1m.csv
+```
 
 The end-to-end test needs Playwright and a Chromium build. If Playwright isn't
 installed in this project, point to an existing install:

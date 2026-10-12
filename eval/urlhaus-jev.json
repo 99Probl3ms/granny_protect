@@ -1,0 +1,5419 @@
+{
+ "description": "Labelled URLs for evaluating Jev. Malicious: URLhaus (abuse.ch) malware-distribution URLs, stratified by hosting type. Benign: Tranco top-list domains (excluding any domain URLhaus lists) and real software downloads on the kinds of hosts URLhaus abuses. Malicious URLs are live malware links: do not open them.",
+ "generated": "2026-10-12T21:19:30.459Z",
+ "sources": {
+  "urlhaus": {
+   "url": "https://urlhaus.abuse.ch/downloads/csv_recent/",
+   "rows": 33816,
+   "terms": "https://urlhaus.abuse.ch/api/ (CC0)"
+  },
+  "tranco": {
+   "url": "https://tranco-list.eu/top-1m.csv.zip",
+   "rows": 1000000
+  }
+ },
+ "seed": 1,
+ "counts": {
+  "label": {
+   "malicious": 200,
+   "benign": 205
+  },
+  "stratum": {
+   "ip_host": 40,
+   "code_hosting": 40,
+   "file_sharing": 30,
+   "free_dynamic_host": 30,
+   "dedicated_domain": 60,
+   "tranco_top_1k": 60,
+   "tranco_1k_10k": 50,
+   "tranco_10k_100k": 50,
+   "download_on_shared_or_vendor_host": 45
+  }
+ },
+ "entries": [
+  {
+   "id": 1,
+   "url": "http://196.191.104.3:59963/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927224,
+    "dateadded": "2026-10-02 23:47:26",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 2,
+   "url": "http://213.232.114.14/systemd",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "cowrie",
+    "gafgyt",
+    "honeypot",
+    "loader-payload",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3916720,
+    "dateadded": "2026-09-15 06:08:10",
+    "status": "online"
+   }
+  },
+  {
+   "id": 3,
+   "url": "http://190.109.227.237:37312/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "arm",
+    "elf",
+    "mirai",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3919216,
+    "dateadded": "2026-09-20 09:34:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 4,
+   "url": "http://196.189.98.110:58665/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3916238,
+    "dateadded": "2026-09-14 10:00:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 5,
+   "url": "http://94.183.174.80/bins/auroraint.x86",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "94-183-174-80",
+    "elf",
+    "mirai",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3924110,
+    "dateadded": "2026-09-28 05:21:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 6,
+   "url": "http://125.46.198.40:41619/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3921877,
+    "dateadded": "2026-09-24 04:02:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 7,
+   "url": "http://90.228.231.169:38579/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3921543,
+    "dateadded": "2026-09-23 10:08:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 8,
+   "url": "http://42.180.85.86:44269/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3925166,
+    "dateadded": "2026-09-29 23:17:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 9,
+   "url": "http://200.115.102.246:57159/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927693,
+    "dateadded": "2026-10-03 15:17:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 10,
+   "url": "http://182.121.73.26:50774/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3925871,
+    "dateadded": "2026-10-01 00:17:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 11,
+   "url": "http://42.52.117.73:41846/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "elf",
+    "mips",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3919373,
+    "dateadded": "2026-09-20 15:45:22",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 12,
+   "url": "http://91.127.103.137:58536/Mozi.m",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "elf",
+    "iot",
+    "mirai",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3927362,
+    "dateadded": "2026-10-03 06:24:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 13,
+   "url": "http://42.225.230.76:47521/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3922673,
+    "dateadded": "2026-09-25 16:47:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 14,
+   "url": "http://176.65.134.121:8080/bot.armv6.se",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3920739,
+    "dateadded": "2026-09-22 05:17:06",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 15,
+   "url": "http://120.28.200.110:52543/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3944027,
+    "dateadded": "2026-10-07 01:47:27",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 16,
+   "url": "http://163.142.94.154:52695/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3946101,
+    "dateadded": "2026-10-08 08:32:08",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 17,
+   "url": "http://182.115.74.13:47904/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "elf",
+    "mips",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3918242,
+    "dateadded": "2026-09-17 16:33:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 18,
+   "url": "http://42.224.30.47:41984/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3916982,
+    "dateadded": "2026-09-15 10:02:26",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 19,
+   "url": "http://59.97.248.180:36849/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "elf",
+    "mips",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3918290,
+    "dateadded": "2026-09-17 21:15:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 20,
+   "url": "http://94.183.174.69/bins/xnxnxnxnxnxnxnxnor1kxnxn",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "94-183-174-69",
+    "elf",
+    "mirai",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3946061,
+    "dateadded": "2026-10-08 07:48:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 21,
+   "url": "http://123.190.224.2:46623/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3921781,
+    "dateadded": "2026-09-23 23:01:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 22,
+   "url": "http://61.137.200.25:38220/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3944062,
+    "dateadded": "2026-10-07 04:02:31",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 23,
+   "url": "http://103.186.77.95:39109/Mozi.m",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3918802,
+    "dateadded": "2026-09-19 05:54:11",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 24,
+   "url": "http://64.89.163.224:8089/main_arm7",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3928310,
+    "dateadded": "2026-10-04 06:59:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 25,
+   "url": "http://112.252.198.182:39918/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "arm",
+    "elf"
+   ],
+   "urlhaus": {
+    "id": 3922029,
+    "dateadded": "2026-09-24 10:58:43",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 26,
+   "url": "http://115.63.12.163:49379/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3919875,
+    "dateadded": "2026-09-21 09:34:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 27,
+   "url": "http://123.9.220.211:48896/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3921401,
+    "dateadded": "2026-09-23 07:32:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 28,
+   "url": "http://36.70.64.64:42007/Mozi.m",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3929405,
+    "dateadded": "2026-10-05 18:02:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 29,
+   "url": "http://59.97.252.238:48691/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "32-bit",
+    "elf",
+    "mips",
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3924227,
+    "dateadded": "2026-09-28 06:54:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 30,
+   "url": "http://120.28.135.4:43205/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3920886,
+    "dateadded": "2026-09-22 10:32:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 31,
+   "url": "http://42.224.103.76:59308/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3915942,
+    "dateadded": "2026-09-13 11:16:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 32,
+   "url": "http://123.13.3.11:49890/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3926116,
+    "dateadded": "2026-10-01 09:46:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 33,
+   "url": "http://218.28.150.164:54155/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3925823,
+    "dateadded": "2026-09-30 22:32:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 34,
+   "url": "http://125.40.50.90:52171/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3922220,
+    "dateadded": "2026-09-24 17:32:32",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 35,
+   "url": "http://172.245.106.144//violet.x86_64",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "elf",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3946621,
+    "dateadded": "2026-10-08 19:02:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 36,
+   "url": "http://58.65.210.168:52545/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3921094,
+    "dateadded": "2026-09-22 18:31:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 37,
+   "url": "http://120.28.195.161:54301/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3947407,
+    "dateadded": "2026-10-10 07:32:06",
+    "status": "online"
+   }
+  },
+  {
+   "id": 38,
+   "url": "http://218.29.146.96:46336/bin.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3929500,
+    "dateadded": "2026-10-05 22:17:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 39,
+   "url": "http://58.65.210.245:55712/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3919971,
+    "dateadded": "2026-09-21 12:05:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 40,
+   "url": "http://115.57.251.137:46903/i",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "ip_host",
+   "threat": "malware_download",
+   "tags": [
+    "Mozi"
+   ],
+   "urlhaus": {
+    "id": 3929440,
+    "dateadded": "2026-10-05 19:02:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 41,
+   "url": "https://raw.githubusercontent.com/Fanchettehomoecious641/indian-stock-analyst/refs/heads/main/protozoiasis/stock_indian_analyst_v3.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930056,
+    "dateadded": "2026-10-06 05:50:15",
+    "status": "online"
+   }
+  },
+  {
+   "id": 42,
+   "url": "https://github.com/radiographic-uncle4030/duh/raw/refs/heads/main/verumontanum/Software-1.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3942978,
+    "dateadded": "2026-10-06 09:08:46",
+    "status": "online"
+   }
+  },
+  {
+   "id": 43,
+   "url": "https://raw.githubusercontent.com/dwiboos/LSP-1-Thermodynamic-Sailing/refs/heads/main/docs/Sailing_Thermodynamic_LS_2.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3932014,
+    "dateadded": "2026-10-06 06:15:44",
+    "status": "online"
+   }
+  },
+  {
+   "id": 44,
+   "url": "https://raw.githubusercontent.com/aalianhassan89-tech/aalianhassan89-tech.github.io/main/Gasconism/Latest_v3.3.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3940019,
+    "dateadded": "2026-10-06 08:34:39",
+    "status": "online"
+   }
+  },
+  {
+   "id": 45,
+   "url": "https://raw.githubusercontent.com/willsondev/realtime-editor-client/main/unimplicable/realtime-editor-client.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3943200,
+    "dateadded": "2026-10-06 09:10:37",
+    "status": "online"
+   }
+  },
+  {
+   "id": 46,
+   "url": "https://raw.githubusercontent.com/tenorleibniz832/scholar-loop/main/engines/torch_regression/scholar_loop_2.8.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930156,
+    "dateadded": "2026-10-06 05:54:17",
+    "status": "online"
+   }
+  },
+  {
+   "id": 47,
+   "url": "https://raw.githubusercontent.com/m1ns09/Llama/main/delicatesse/Llama.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3937810,
+    "dateadded": "2026-10-06 07:12:52",
+    "status": "online"
+   }
+  },
+  {
+   "id": 48,
+   "url": "https://raw.githubusercontent.com/mikhaal/phone-agent-xiaozhi/HEAD/android/app/src/main/java/com/xiaozhi/phoneagent/speech/phone_agent_xiaozhi_v3.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930540,
+    "dateadded": "2026-10-06 05:58:36",
+    "status": "online"
+   }
+  },
+  {
+   "id": 49,
+   "url": "https://raw.githubusercontent.com/Dexterhydrophilic725/TenkaiMenu/HEAD/src/Menu_Tenkai_2.8.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "FakeGit",
+    "luajit",
+    "SmartLoader",
+    "Stealc",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3948304,
+    "dateadded": "2026-10-12 06:56:28",
+    "status": "online"
+   }
+  },
+  {
+   "id": 50,
+   "url": "https://raw.githubusercontent.com/leana56/ring-buffers-research/main/src/rings/spsc/research-ring-buffers-functionate.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3937796,
+    "dateadded": "2026-10-06 07:12:44",
+    "status": "online"
+   }
+  },
+  {
+   "id": 51,
+   "url": "https://raw.githubusercontent.com/SEVORDW/agents/refs/heads/main/psilanthropist/Software_v1.6.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3934009,
+    "dateadded": "2026-10-06 06:35:03",
+    "status": "online"
+   }
+  },
+  {
+   "id": 52,
+   "url": "https://raw.githubusercontent.com/arish-mhrjn/newsMonkey/main/public/Monkey-news-2.0.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3942306,
+    "dateadded": "2026-10-06 09:04:08",
+    "status": "online"
+   }
+  },
+  {
+   "id": 53,
+   "url": "https://raw.githubusercontent.com/jacksecro69420/GithubMonitor/refs/heads/main/docs/Github-Monitor-v2.1-beta.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3936706,
+    "dateadded": "2026-10-06 07:02:36",
+    "status": "online"
+   }
+  },
+  {
+   "id": 54,
+   "url": "https://raw.githubusercontent.com/PRRONGRO-source/Warzone-Hack---Call-of-Duty-Warzone-Hack-2026/main/isuroid/v3.7-beta.1.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3932550,
+    "dateadded": "2026-10-06 06:21:07",
+    "status": "online"
+   }
+  },
+  {
+   "id": 55,
+   "url": "https://raw.githubusercontent.com/technicalissuee/leblanc/HEAD/assets/leblanc_v1.3.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930962,
+    "dateadded": "2026-10-06 06:03:56",
+    "status": "online"
+   }
+  },
+  {
+   "id": 56,
+   "url": "https://raw.githubusercontent.com/ajfrrr/cryptoschema-extractor/HEAD/cryptoschema_extractor/extractor-cryptoschema-v1.6.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930082,
+    "dateadded": "2026-10-06 05:50:53",
+    "status": "online"
+   }
+  },
+  {
+   "id": 57,
+   "url": "https://raw.githubusercontent.com/hari-vdh/Scalable-UDP-Server-for-Low-Latency-Data-Transmission/refs/heads/main/ci/Server-Transmission-Scalable-for-Data-UD-Low-Latency-v2.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3933220,
+    "dateadded": "2026-10-06 06:26:56",
+    "status": "online"
+   }
+  },
+  {
+   "id": 58,
+   "url": "https://raw.githubusercontent.com/Sherwin455/App-Development/master/lib/resources/texts/App-Development_cordilleran.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3941199,
+    "dateadded": "2026-10-06 08:50:18",
+    "status": "online"
+   }
+  },
+  {
+   "id": 59,
+   "url": "https://raw.githubusercontent.com/negm2027/revision-fx/HEAD/rubbingstone/revision-fx-3.5-alpha.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3930107,
+    "dateadded": "2026-10-06 05:52:39",
+    "status": "online"
+   }
+  },
+  {
+   "id": 60,
+   "url": "https://raw.githubusercontent.com/arturoaeriform174/arturoaeriform174.github.io/main/assets/Dist_v3.3.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3939654,
+    "dateadded": "2026-10-06 08:32:11",
+    "status": "online"
+   }
+  },
+  {
+   "id": 61,
+   "url": "https://raw.githubusercontent.com/yogapemoy/docker-best-practices-skill/main/references/docker-practices-skill-best-spendthrift.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3936466,
+    "dateadded": "2026-10-06 06:59:47",
+    "status": "online"
+   }
+  },
+  {
+   "id": 62,
+   "url": "https://raw.githubusercontent.com/uterrfly/FiveM-External-Cheat/HEAD/Loader.exe",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "BRAT",
+    "CheatSheet",
+    "exe",
+    "github"
+   ],
+   "urlhaus": {
+    "id": 3945091,
+    "dateadded": "2026-10-08 05:40:55",
+    "status": "online"
+   }
+  },
+  {
+   "id": 63,
+   "url": "https://github.com/GathogoG/fitness-app/raw/refs/heads/main/src/fitness_app_3.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3942744,
+    "dateadded": "2026-10-06 09:07:14",
+    "status": "online"
+   }
+  },
+  {
+   "id": 64,
+   "url": "https://raw.githubusercontent.com/Harvey-the-goat/react-marketplace/refs/heads/main/public/react_marketplace_1.9.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3936030,
+    "dateadded": "2026-10-06 06:54:45",
+    "status": "online"
+   }
+  },
+  {
+   "id": 65,
+   "url": "https://gitlab.com/NellyKit/escape-from-tarkov-cheat-undetected-with-aimbot-esp-wallhack-radar-hack-and-more/-/raw/main/eft_hack.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "CheatSheet",
+    "gitlab",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3945190,
+    "dateadded": "2026-10-08 05:42:11",
+    "status": "online"
+   }
+  },
+  {
+   "id": 66,
+   "url": "https://raw.githubusercontent.com/RushiRuns/AudioEditorKit/main/Sources/AudioClip/Kit_Audio_Editor_v3.9.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3943327,
+    "dateadded": "2026-10-06 09:20:02",
+    "status": "online"
+   }
+  },
+  {
+   "id": 67,
+   "url": "https://raw.githubusercontent.com/clearn23/pyroki/main/src/pyroki/costs/Software-2.6.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3943393,
+    "dateadded": "2026-10-06 09:20:41",
+    "status": "online"
+   }
+  },
+  {
+   "id": 68,
+   "url": "https://raw.githubusercontent.com/engineerbishnu/mywordpress/refs/heads/main/isotropy/Software-v1.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3939249,
+    "dateadded": "2026-10-06 08:20:41",
+    "status": "online"
+   }
+  },
+  {
+   "id": 69,
+   "url": "https://github.com/bahruddinrm/jurnal_kelas/raw/refs/heads/main/vendor/kint-php/kint/resources/compiled/kelas_jurnal_3.8-alpha.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3941787,
+    "dateadded": "2026-10-06 08:54:51",
+    "status": "online"
+   }
+  },
+  {
+   "id": 70,
+   "url": "https://github.com/Rohanvp07/Covid-19-Analysis-and-Prediction/raw/refs/heads/main/ovotesticular/Prediction-and-Covid-Analysis-v2.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3940980,
+    "dateadded": "2026-10-06 08:48:45",
+    "status": "online"
+   }
+  },
+  {
+   "id": 71,
+   "url": "https://raw.githubusercontent.com/lenane68/PhantomBet/refs/heads/main/cre-workflow/src/Bet_Phantom_v3.9-beta.5.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3935289,
+    "dateadded": "2026-10-06 06:47:48",
+    "status": "online"
+   }
+  },
+  {
+   "id": 72,
+   "url": "https://raw.githubusercontent.com/Smitten-teilharddechardin336/python/main/metrocarat/Software_inculpably.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3932361,
+    "dateadded": "2026-10-06 06:19:21",
+    "status": "online"
+   }
+  },
+  {
+   "id": 73,
+   "url": "https://gitlab.com/astroworlds/valorantexternalcheat/-/raw/main/Loader.exe",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "CheatSheet",
+    "exe",
+    "gitlab"
+   ],
+   "urlhaus": {
+    "id": 3944834,
+    "dateadded": "2026-10-08 05:37:45",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 74,
+   "url": "https://raw.githubusercontent.com/Jaffy9/jaffy9.github.io/main/images/2.0.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3939567,
+    "dateadded": "2026-10-06 08:31:35",
+    "status": "online"
+   }
+  },
+  {
+   "id": 75,
+   "url": "https://raw.githubusercontent.com/Lilchris007/AGENTS.md_generator/refs/heads/main/RELEASES/md-AGENT-generator-v2.9.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3932035,
+    "dateadded": "2026-10-06 06:16:00",
+    "status": "online"
+   }
+  },
+  {
+   "id": 76,
+   "url": "https://raw.githubusercontent.com/cssushmi4785/lapscore/HEAD/client/public/Software-3.4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "FakeGit",
+    "luajit",
+    "SmartLoader",
+    "Stealc",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3948263,
+    "dateadded": "2026-10-12 06:56:17",
+    "status": "online"
+   }
+  },
+  {
+   "id": 77,
+   "url": "https://raw.githubusercontent.com/zduchevreuil/Jeux-Combats-2/main/.vscode/Jeux-Combats-v2.2-beta.5.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3939653,
+    "dateadded": "2026-10-06 08:32:11",
+    "status": "online"
+   }
+  },
+  {
+   "id": 78,
+   "url": "https://raw.githubusercontent.com/Ardythrunresistant2575/ardythrunresistant2575.github.io/main/shared/types/Latest_2.7.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3940413,
+    "dateadded": "2026-10-06 08:37:40",
+    "status": "online"
+   }
+  },
+  {
+   "id": 79,
+   "url": "https://raw.githubusercontent.com/kossen6891/claude-history-sync/refs/heads/main/tests/claude-history-sync-v3.5.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3932396,
+    "dateadded": "2026-10-06 06:19:43",
+    "status": "online"
+   }
+  },
+  {
+   "id": 80,
+   "url": "https://raw.githubusercontent.com/Bestselling-goliath423/turboquant_cutile/refs/heads/main/docs/cutile_turboquant_v1.1-beta.5.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "code_hosting",
+   "threat": "malware_download",
+   "tags": [
+    "github",
+    "LuaJIT-loader",
+    "SmartLoader",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3934171,
+    "dateadded": "2026-10-06 06:36:33",
+    "status": "online"
+   }
+  },
+  {
+   "id": 81,
+   "url": "https://cdn.discordapp.com/attachments/1557190213120303175/1558972335887880242/mental_debug_cracked.jar?ex=6ace0a61&is=6accb8e1&hm=887dfe3a41d4602262e7eb21073df9ac6ab2597eb72c7581807376caf82f40c9&",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3949154,
+    "dateadded": "2026-10-12 18:47:09",
+    "status": "online"
+   }
+  },
+  {
+   "id": 82,
+   "url": "https://cdn.discordapp.com/attachments/1515230295643787377/1556719164180275301/bundle_1.zip?ex=6ac52f33&is=6ac3ddb3&hm=742cc81770b60be7b3cf4ff56eacc9c19ef6cc1f3b47245f83ae161853cd6c74&",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "IRAHook"
+   ],
+   "urlhaus": {
+    "id": 3929408,
+    "dateadded": "2026-10-05 18:02:27",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 83,
+   "url": "https://drive.google.com/uc?export=download&id=1sVIhz0Weke2JNr9dvAti6q1KnAUNZrnT",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "encrypted",
+    "GuLoader",
+    "rat",
+    "RemcosRAT"
+   ],
+   "urlhaus": {
+    "id": 3916221,
+    "dateadded": "2026-09-14 09:13:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 84,
+   "url": "https://www.dropbox.com/scl/fi/vchxh1gexd1y52wjpyqtk/RacingSimulator.zip?rlkey=8bveooct7irzfn71nlpcthfxk&st=xnvu11qh&dl=1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "bytenode",
+    "discord",
+    "Electron",
+    "fake-game",
+    "HADES",
+    "rat",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3947348,
+    "dateadded": "2026-10-10 05:48:31",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 85,
+   "url": "https://res.cloudinary.com/slwv2ypq/image/upload/v1789351898/img_221113.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3916533,
+    "dateadded": "2026-09-14 18:41:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 86,
+   "url": "https://www.dropbox.com/scl/fi/n9nla8a503u1m3qvij1r9/bundle.zip?rlkey=8ow1od83mlcmm4qd9er1uof9a&st=8f249c4n&dl=1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "IRAHook"
+   ],
+   "urlhaus": {
+    "id": 3923162,
+    "dateadded": "2026-09-26 15:07:37",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 87,
+   "url": "https://drive.google.com/uc?export=download&id=1rE6ntRsaq7laH-PpBXoh3iyKOxSvEbeI",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "Encoded",
+    "GuLoader",
+    "rat",
+    "RemcosRAT"
+   ],
+   "urlhaus": {
+    "id": 3925585,
+    "dateadded": "2026-09-30 14:45:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 88,
+   "url": "https://www.dropbox.com/s/zhp1b06imehwylq/Synaptics.rar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3943765,
+    "dateadded": "2026-10-06 14:31:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 89,
+   "url": "https://firebasestorage.googleapis.com/v0/b/julyendingapama.firebasestorage.app/o/kingjoo.png?alt=media&token=36145a21-d722-4709-9287-f8d67e90830a",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "Formbook",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3918248,
+    "dateadded": "2026-09-17 16:37:19",
+    "status": "online"
+   }
+  },
+  {
+   "id": 90,
+   "url": "https://files.catbox.moe/xlk3av.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "redis",
+    "shell-script"
+   ],
+   "urlhaus": {
+    "id": 3918356,
+    "dateadded": "2026-09-18 05:04:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 91,
+   "url": "https://res.cloudinary.com/ohmsggn3/image/upload/v1790055283/img_013224_lyxhcs.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "rat",
+    "RemcosRAT",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3920923,
+    "dateadded": "2026-09-22 12:43:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 92,
+   "url": "https://media.discordapp.net/attachments/1557973486176043018/1557974426660905030/BetterSurvival.jar?ex=6ac9c041&is=6ac86ec1&hm=9436b20ab3fc47cc6db0eb41943bc7cf49a68f1bf0b10e89fa539b3aa9e38e55&",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3946785,
+    "dateadded": "2026-10-09 06:06:06",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 93,
+   "url": "https://download2260.mediafire.com/ad5bv9xw9nmgGRWWuGe6MtiSm3R4qnFN7Ax_nj6Db0gxszdMHdjS0AJZf7KR3fVsDiIXprFAlTD6aBEe_YqZ5Z0R0F5GZK-Y9VQ7w8x1STuYX5tWTPAdOCwsnXQn4S4Q2P644GFWEIVoXNp287FsMfSbnLkQ1JBpZ5bTVgWc5r4/t1rg0bos6coudtl/OverX+LoaderV.5.6.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3947648,
+    "dateadded": "2026-10-10 16:40:09",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 94,
+   "url": "https://firebasestorage.googleapis.com/v0/b/a30a-33e89d-acefa0.firebasestorage.app/o/classLincoln.ps1?alt=media&token=0291b02f-3b54-4246-bc6d-6381c104d705",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "AgentTesla"
+   ],
+   "urlhaus": {
+    "id": 3938646,
+    "dateadded": "2026-10-06 08:07:16",
+    "status": "online"
+   }
+  },
+  {
+   "id": 95,
+   "url": "https://download2296.mediafire.com/uk2y6ehlocrgk-Wgx1Lfst0OxHSfaF6lXSKb1OxOhWWbBIJbmmgHPaxnSw3bE1mHQfH2jFdl4mV4V0qbFgJQmj2-3T371R26mMrGg4rAkYKNxEI4NXn-8BM2uDWLbJGcIBlostKoPHOo96LFCZy36G1H5Y-rv-KZ2CN7HwTQ7W0/q1pcfiniu93mzb3/FortniteHack.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-fortnitehack",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3915970,
+    "dateadded": "2026-09-13 15:36:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 96,
+   "url": "https://download948.mediafire.com/n9wyk8kgnkegD7ZBt1vcvWeQeaKaUCAGrMgiv2rDHxl3gaKHuzQvgEEyXQJrvJK5URvt8rvmo3bZtJPeYgGih0W2e4hpTmw9E2V5fOYPiiy8S1sOkWZhvt_ZrOSiyNrMAEDCwWOtj6pZsfj9LFOCRMZ6fU3eSV5B5-2R5oS22Xc/z4b06x88erl36fx/Cs2Hack.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-cs2hack",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3948069,
+    "dateadded": "2026-10-11 15:28:39",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 97,
+   "url": "https://res.cloudinary.com/ohmsggn3/image/upload/v1789974451/img_030613_zboouz.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "rat",
+    "RemcosRAT",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3921059,
+    "dateadded": "2026-09-22 17:24:11",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 98,
+   "url": "https://www.dropbox.com/s/n1w4p8gc6jzo0sg/SUpdate.ini",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3943769,
+    "dateadded": "2026-10-06 14:31:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 99,
+   "url": "https://download2292.mediafire.com/sko69h7rx9hgMcteJMpEpK_0WPxPexjc1f8qrRgYcuDNs9MCHaD5EpmIE-zls9qb7ina3Moh-KyDhF0t1mwNpFEuxJRkX8Hc0laPcXWQtJAQsvupnhB0tobS_9uzVava7ocBqGHuoOG_2LVcCXhkibSqkbfhkhGr8yXUuAzu2OM/gl5lvgixp12jloa/MurderMysteryScript.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw- murderscript",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3915971,
+    "dateadded": "2026-09-13 15:36:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 100,
+   "url": "https://drive.usercontent.google.com/download?id=1tZApf8r52iWTbCFbncYiQTgUiKVtT9_L&export=download&authuser=0&confirm=t&uuid=1e1dd160-6170-4291-9946-3c17d14a17d7&at=AMrWOn1GOle5aEA706WPJcoNRPak%3A1791741732974",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw- 123123",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3948112,
+    "dateadded": "2026-10-11 18:28:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 101,
+   "url": "https://download1351.mediafire.com/0tz8pd0mhgwg1M2UvU-kJ4S8ELTf17VG3VuDHq5DgiAYqXsUVCzkM9HtiD40dv8t8xAHghbpcCcIuqIEv6b3H5CRaa06lYGRpTsVyGRJuSRMEYgZp2ABxNl3PBkz6kyTnn7NndbCW1xDLuF4AMbe0dH_5_73CWgZ7ucVsO_6XGzTptwn/y9u21ia88zth6h1/bundle.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "IRAHook"
+   ],
+   "urlhaus": {
+    "id": 3923646,
+    "dateadded": "2026-09-27 08:51:43",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 102,
+   "url": "https://docs.google.com/uc?export=download&id=1IbwfNpKpa1JzvXsDT-WgNpp5nWrklisG",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3918134,
+    "dateadded": "2026-09-17 14:00:21",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 103,
+   "url": "https://www.mediafire.com/file/p3mfnlwgzn6rl90/DeltaExecutor.zip/file",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-deltaexecutor",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3916026,
+    "dateadded": "2026-09-13 18:07:11",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 104,
+   "url": "https://www.mediafire.com/file/5zdr3wzj48j8odd/SETUP_PACKAGE_(KEY=2088).zip/file",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "Password-protected",
+    "ValetiStealer",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3946614,
+    "dateadded": "2026-10-08 18:34:05",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 105,
+   "url": "https://drive.usercontent.google.com/download?id=1zntk1iIhB4Tc_TngGAMWtYs_ObEBz9Xv&export=download",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3943785,
+    "dateadded": "2026-10-06 15:22:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 106,
+   "url": "https://res.cloudinary.com/slwv2ypq/image/upload/v1789372892/img_040115.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3916534,
+    "dateadded": "2026-09-14 18:41:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 107,
+   "url": "https://res.cloudinary.com/tll9jvom/image/upload/v1789365255/img_075247.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "PureLogsStealer",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3916169,
+    "dateadded": "2026-09-14 08:14:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 108,
+   "url": "https://download2360.mediafire.com/p5boz5a1oa1gz8-OL_FPEX2HxF7fMvjvj8EOS1Ii7tQs3FcWq61yO-D00-Td1I-R3bPmDK_RqUBULBzAhbCG9LfXMLyc35dFr3lx14RoPXUCS5YMGdbPPMsfE6BUo7hk643KUu22es-6ulAvM6LmdBn2zTxP1bsJg_-xUujYWUc/gpu44k59uccr9ev/DeltaExecutor.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-deltaexecutor",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3915962,
+    "dateadded": "2026-09-13 13:43:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 109,
+   "url": "https://pixeldrain.com/api/file/UNcsXkRT",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3926809,
+    "dateadded": "2026-10-02 09:25:21",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 110,
+   "url": "https://res.cloudinary.com/te9euryt/image/upload/v1789469538/img_125004.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "file_sharing",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3917061,
+    "dateadded": "2026-09-15 15:38:10",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 111,
+   "url": "http://ertdyfiabwggujakd.duckdns.org/s-h.4-.Sakura",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "gafgyt"
+   ],
+   "urlhaus": {
+    "id": 3919746,
+    "dateadded": "2026-09-21 07:07:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 112,
+   "url": "http://iloveanal.work.gd/armv6l",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927577,
+    "dateadded": "2026-10-03 10:34:38",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 113,
+   "url": "https://happyduxkinglinog.duckdns.org/agent-shot.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3923094,
+    "dateadded": "2026-09-26 11:31:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 114,
+   "url": "https://rough-glade-bfc8.pentagon-e8b.workers.dev/downloads/files/glazed-1.21.11-n-16.1.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3925269,
+    "dateadded": "2026-09-30 04:39:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 115,
+   "url": "https://rough-glade-bfc8.pentagon-e8b.workers.dev/deps/baritone/Baritone-Client-Mod-Meteor-Fabric-1.21.4.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3925307,
+    "dateadded": "2026-09-30 04:40:27",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 116,
+   "url": "http://ertdyfiabwggujakd.duckdns.org/a-r.m-4.Sakura",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3919747,
+    "dateadded": "2026-09-21 07:07:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 117,
+   "url": "http://dstats.qzz.io/payload.sh",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3924511,
+    "dateadded": "2026-09-28 18:41:29",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 118,
+   "url": "https://proishestviyagoodru.vercel.app/?download=1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "apk ",
+    "mamont"
+   ],
+   "urlhaus": {
+    "id": 3922445,
+    "dateadded": "2026-09-25 06:23:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 119,
+   "url": "http://chibomaydan.devs.surf/ppc",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3927898,
+    "dateadded": "2026-10-03 17:42:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 120,
+   "url": "https://videosnw-ru.vercel.app/?download=1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "apk ",
+    "mamont"
+   ],
+   "urlhaus": {
+    "id": 3947371,
+    "dateadded": "2026-10-10 06:07:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 121,
+   "url": "http://wemqmewkqewq.work.gd/b_lt",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927549,
+    "dateadded": "2026-10-03 10:33:26",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 122,
+   "url": "http://dstats.qzz.io/nshmips",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3924533,
+    "dateadded": "2026-09-28 18:41:38",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 123,
+   "url": "http://iloveanal.work.gd/i586",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927551,
+    "dateadded": "2026-10-03 10:34:22",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 124,
+   "url": "https://campus-engine-neural-chorus.trycloudflare.com/svc/r?h=vv",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "docker"
+   ],
+   "urlhaus": {
+    "id": 3947541,
+    "dateadded": "2026-10-10 13:02:06",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 125,
+   "url": "https://kn.devmicro7.workers.dev/m/license-20260902225642-8ca1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    " jar",
+    " java",
+    " minecraft",
+    "MicroStealer"
+   ],
+   "urlhaus": {
+    "id": 3921894,
+    "dateadded": "2026-09-24 05:09:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 126,
+   "url": "http://wemqmewkqewq.work.gd/x86_64_clean",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927538,
+    "dateadded": "2026-10-03 10:32:30",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 127,
+   "url": "https://downloader.exeexe.workers.dev/u4i7o1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "PythonStealer",
+    "shadowproject",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3926749,
+    "dateadded": "2026-10-02 06:35:42",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 128,
+   "url": "https://rough-truth-e072.publicftpresend.workers.dev/smpuvcjzd",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "xworm"
+   ],
+   "urlhaus": {
+    "id": 3944405,
+    "dateadded": "2026-10-07 18:25:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 129,
+   "url": "https://dfdghfhddhdhfhdfhdfyhdfdfh.pages.dev/blob.bin",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3917937,
+    "dateadded": "2026-09-17 05:45:21",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 130,
+   "url": "https://modhollow.netlify.app/files/meteor-client/meteor-client-1.21.11-86.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3947580,
+    "dateadded": "2026-10-10 13:03:09",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 131,
+   "url": "https://modhollow.netlify.app/files/opsec/opsec-1.21.11%2Bv1.1.7.1.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3947579,
+    "dateadded": "2026-10-10 13:03:07",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 132,
+   "url": "https://brightlaunch-ext75642.vercel.app/api/m",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "ContagiousInterview",
+    "DPRK",
+    "githook"
+   ],
+   "urlhaus": {
+    "id": 3928941,
+    "dateadded": "2026-10-05 06:23:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 133,
+   "url": "https://ns.devmicro7.workers.dev/zips/e8bb3088f6c55fa6.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "java",
+    "minecraft",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3948892,
+    "dateadded": "2026-10-12 07:20:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 134,
+   "url": "https://rough-truth-e072.publicftpresend.workers.dev/bmqwkvjus",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "xworm"
+   ],
+   "urlhaus": {
+    "id": 3921635,
+    "dateadded": "2026-09-23 14:01:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 135,
+   "url": "https://ns.devmicro7.workers.dev/zips/f2d0984b93e808eb.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    " jar",
+    " java",
+    " minecraft",
+    "MicroStealer"
+   ],
+   "urlhaus": {
+    "id": 3921901,
+    "dateadded": "2026-09-24 05:09:47",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 136,
+   "url": "https://quest-hz-preds-mod.pages.dev/Hz&PredsMod_HYLODevGX.v1.0.0.exe",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3916455,
+    "dateadded": "2026-09-14 14:15:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 137,
+   "url": "http://emwqkekwqmekwq.work.gd/i586",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927624,
+    "dateadded": "2026-10-03 10:49:43",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 138,
+   "url": "http://xiangduck.sld.tw/violet.arm6",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3926921,
+    "dateadded": "2026-10-02 15:55:26",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 139,
+   "url": "http://chibomaydan.devs.surf/sh4",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3927900,
+    "dateadded": "2026-10-03 17:42:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 140,
+   "url": "https://billowing-lab-d15f.pentagon-e8b.workers.dev/downloads/Xenon_Client_1.21_X.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "free_dynamic_host",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3917222,
+    "dateadded": "2026-09-16 06:26:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 141,
+   "url": "https://get.activates.win/Update.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "fakemas"
+   ],
+   "urlhaus": {
+    "id": 3916141,
+    "dateadded": "2026-09-14 06:02:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 142,
+   "url": "https://gamblerigmod.org/gamble-rig-26.2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3917246,
+    "dateadded": "2026-09-16 06:41:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 143,
+   "url": "https://www.tmcksa.com/news/secured_stub.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "Formbook",
+    "powershell",
+    "ps1"
+   ],
+   "urlhaus": {
+    "id": 3929103,
+    "dateadded": "2026-10-05 09:28:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 144,
+   "url": "https://prestige-client.live/downloads/PrestigeSetup_pw1337.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "rustystealer"
+   ],
+   "urlhaus": {
+    "id": 3926731,
+    "dateadded": "2026-10-02 06:35:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 145,
+   "url": "https://get.activeted.win/",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "fakemas",
+    "OverlordRAT",
+    "ua-ps"
+   ],
+   "urlhaus": {
+    "id": 3916676,
+    "dateadded": "2026-09-15 06:07:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 146,
+   "url": "https://polinexclient.org/Polinex-Fabric-1.21.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3917243,
+    "dateadded": "2026-09-16 06:41:17",
+    "status": "online"
+   }
+  },
+  {
+   "id": 147,
+   "url": "https://1rvrental.com/g.php",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ClickFix",
+    "Electron",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3946900,
+    "dateadded": "2026-10-09 10:50:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 148,
+   "url": "https://goobaaclient.com/downloads/GoobaaClient.1.21.11.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3947575,
+    "dateadded": "2026-10-10 13:02:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 149,
+   "url": "https://aksiyononline.best/masabikk4/secured_stub.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "MassLogger",
+    "opendir",
+    "powershell",
+    "ps1"
+   ],
+   "urlhaus": {
+    "id": 3938659,
+    "dateadded": "2026-10-06 08:13:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 150,
+   "url": "https://stanarcservice.com:8443/payload/18d92fc0860cc33a.bin",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3946822,
+    "dateadded": "2026-10-09 06:10:07",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 151,
+   "url": "https://loader2-4.github.io/Loader2-4.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "bridgeagent"
+   ],
+   "urlhaus": {
+    "id": 3944319,
+    "dateadded": "2026-10-07 16:28:14",
+    "status": "online"
+   }
+  },
+  {
+   "id": 152,
+   "url": "https://origin.nemoclawcloud.com/DvnX.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-dvx.to",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3948114,
+    "dateadded": "2026-10-11 18:28:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 153,
+   "url": "http://maxxlavalink.cyou/bins/main_x86_64",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3928356,
+    "dateadded": "2026-10-04 06:59:37",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 154,
+   "url": "https://andbake.cam/img_233158.png",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "stego",
+    "xworm"
+   ],
+   "urlhaus": {
+    "id": 3944404,
+    "dateadded": "2026-10-07 18:24:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 155,
+   "url": "http://likedrink.beer/bins/mirai.rv32",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3928293,
+    "dateadded": "2026-10-04 06:59:22",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 156,
+   "url": "http://maxxlavalink.cyou/bins/main_mpsl",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3928368,
+    "dateadded": "2026-10-04 06:59:41",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 157,
+   "url": "https://xiazailianjie.com/WPS_Setup_X64.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "SilverFox",
+    "ValleyRAT"
+   ],
+   "urlhaus": {
+    "id": 3944123,
+    "dateadded": "2026-10-07 04:49:18",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 158,
+   "url": "https://go.lumibricks.com/2MYMYx",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3922046,
+    "dateadded": "2026-09-24 11:51:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 159,
+   "url": "https://donutclients.st/NuclearAddons-26.2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "java",
+    "stealer",
+    "vm"
+   ],
+   "urlhaus": {
+    "id": 3944095,
+    "dateadded": "2026-10-07 04:41:11",
+    "status": "online"
+   }
+  },
+  {
+   "id": 160,
+   "url": "https://api-relay.cc/hex/traffic",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "ClickFix"
+   ],
+   "urlhaus": {
+    "id": 3918361,
+    "dateadded": "2026-09-18 05:10:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 161,
+   "url": "https://skymoders.top/taunahi/TaunahiAutoPatch-b6-fabric.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    ".jar malware",
+    "hypixel",
+    "minecraft",
+    "trojan",
+    "trv"
+   ],
+   "urlhaus": {
+    "id": 3919365,
+    "dateadded": "2026-09-20 15:08:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 162,
+   "url": "https://wielixclient.net/WielixClient-26.2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "minecraft",
+    "SilentNet",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3922070,
+    "dateadded": "2026-09-24 12:37:24",
+    "status": "online"
+   }
+  },
+  {
+   "id": 163,
+   "url": "http://astraia.co.za/kizzy/5.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3921080,
+    "dateadded": "2026-09-22 17:48:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 164,
+   "url": "https://workerstats.net/downloadables/nigf.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "fakemas",
+    "zip"
+   ],
+   "urlhaus": {
+    "id": 3917113,
+    "dateadded": "2026-09-15 18:31:30",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 165,
+   "url": "https://freeclients.net/downloads/meteor-client-1.21.5-54.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3921383,
+    "dateadded": "2026-09-23 07:23:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 166,
+   "url": "https://athuselevadores.com.br/Bleaty.toc",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "Encoded",
+    "GuLoader"
+   ],
+   "urlhaus": {
+    "id": 3944421,
+    "dateadded": "2026-10-07 18:37:13",
+    "status": "online"
+   }
+  },
+  {
+   "id": 167,
+   "url": "https://rxb.immortales.fun/DivX.zip",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "malware",
+    "pw-dvx.to",
+    "stealer"
+   ],
+   "urlhaus": {
+    "id": 3947576,
+    "dateadded": "2026-10-10 13:02:28",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 168,
+   "url": "https://locservice.short.gy/ZRsvn1k9m",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ContagiousInterview",
+    "sh",
+    "VSCode"
+   ],
+   "urlhaus": {
+    "id": 3948869,
+    "dateadded": "2026-10-12 07:19:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 169,
+   "url": "http://swatting.wiki/manji.i486",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai",
+    "swatting-wiki",
+    "ua-wget"
+   ],
+   "urlhaus": {
+    "id": 3923534,
+    "dateadded": "2026-09-27 06:54:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 170,
+   "url": "https://prestigeclient.st/PrestigeLoader-26.2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    ".jar malware",
+    "minecraft",
+    "trojan",
+    "trv"
+   ],
+   "urlhaus": {
+    "id": 3919358,
+    "dateadded": "2026-09-20 14:53:15",
+    "status": "online"
+   }
+  },
+  {
+   "id": 171,
+   "url": "https://ficus.in/img/img_210244.png",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "rat",
+    "RemcosRAT",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3926424,
+    "dateadded": "2026-10-01 16:12:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 172,
+   "url": "http://idid.pl/3.jpg",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "rat",
+    "RemcosRAT"
+   ],
+   "urlhaus": {
+    "id": 3924963,
+    "dateadded": "2026-09-29 12:39:16",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 173,
+   "url": "https://expirience.icu/api/file-share/883e3cde-f663-4e50-bc61-84dca8916960/download",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "Overlord",
+    "rat"
+   ],
+   "urlhaus": {
+    "id": 3927367,
+    "dateadded": "2026-10-03 06:30:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 174,
+   "url": "http://crystalbranchtw.blog/arm6",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3924478,
+    "dateadded": "2026-09-28 18:41:24",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 175,
+   "url": "http://truswallet.foundation/bins/psh4",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927522,
+    "dateadded": "2026-10-03 10:29:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 176,
+   "url": "https://www.beinke-aufzuege.de/components/com_media/fkqabmp/ntxqre1/edfwcgi/mmmsecured_stub.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "Formbook",
+    "powershell",
+    "ps1"
+   ],
+   "urlhaus": {
+    "id": 3948961,
+    "dateadded": "2026-10-12 08:09:06",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 177,
+   "url": "http://likedrink.beer/bins/mirai.x86",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3928298,
+    "dateadded": "2026-10-04 06:59:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 178,
+   "url": "https://api.npoint.io/40e32d283a9d97e59252/a",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "pypi",
+    "python"
+   ],
+   "urlhaus": {
+    "id": 3948884,
+    "dateadded": "2026-10-12 07:20:07",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 179,
+   "url": "https://donutclients.st/FerriteCore-26.2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "java",
+    "stealer",
+    "vm"
+   ],
+   "urlhaus": {
+    "id": 3944102,
+    "dateadded": "2026-10-07 04:41:12",
+    "status": "online"
+   }
+  },
+  {
+   "id": 180,
+   "url": "https://trouserstreak.net/trouser-streak-1.6.1-1.21.11.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3916126,
+    "dateadded": "2026-09-14 06:01:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 181,
+   "url": "https://chrome.browserdownloads.ru/downloads/ru/YChromeSetup.exe",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "exe"
+   ],
+   "urlhaus": {
+    "id": 3926760,
+    "dateadded": "2026-10-02 06:36:58",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 182,
+   "url": "https://porterneuman.mx/wp-content/plugins/Team/secured_stub.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "AveMariaRAT",
+    "opendir",
+    "powershell",
+    "ps1",
+    "rat"
+   ],
+   "urlhaus": {
+    "id": 3925601,
+    "dateadded": "2026-09-30 15:00:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 183,
+   "url": "http://hand.genddos.st:48180/telnet",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "cowrie",
+    "honeypot"
+   ],
+   "urlhaus": {
+    "id": 3928892,
+    "dateadded": "2026-10-05 06:22:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 184,
+   "url": "https://6ab746fb57212ca6e1e7b121.imgix.net/img_142142.png",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "PureLogsStealer",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3925417,
+    "dateadded": "2026-09-30 08:43:18",
+    "status": "online"
+   }
+  },
+  {
+   "id": 185,
+   "url": "https://epibenie.dz/non/AkSdjmc.txt",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "Encoded",
+    "rat",
+    "rev-base64-loader",
+    "SiriusRAT"
+   ],
+   "urlhaus": {
+    "id": 3918211,
+    "dateadded": "2026-09-17 15:56:20",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 186,
+   "url": "https://samul.elblag.pl/img_190228.png",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "AgentTesla",
+    "stego"
+   ],
+   "urlhaus": {
+    "id": 3948967,
+    "dateadded": "2026-10-12 08:16:07",
+    "status": "online"
+   }
+  },
+  {
+   "id": 187,
+   "url": "http://amaamn.com/cursor.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "363d88e5a9c1d1a3f45f3741a6e2fcaa",
+    "dropped-by-vidar"
+   ],
+   "urlhaus": {
+    "id": 3917838,
+    "dateadded": "2026-09-16 18:13:27",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 188,
+   "url": "https://aksiyononline.best/mmmmmmassiccc/secured_stub.ps1",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "opendir",
+    "powershell",
+    "ps1"
+   ],
+   "urlhaus": {
+    "id": 3938658,
+    "dateadded": "2026-10-06 08:13:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 189,
+   "url": "https://app.ezmarketz.com/vendor/twilio/sdk/src/Twilio/Rest/Chat/V2/img_060144.png",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3925638,
+    "dateadded": "2026-09-30 16:25:14",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 190,
+   "url": "https://odinclient.st/OdinClient-26.3.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3923869,
+    "dateadded": "2026-09-27 17:06:17",
+    "status": "online"
+   }
+  },
+  {
+   "id": 191,
+   "url": "http://power.belyxhost.in/bins/musl",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3923095,
+    "dateadded": "2026-09-26 11:31:19",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 192,
+   "url": "http://armoniamiddleeast.ae/google.exe",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [],
+   "urlhaus": {
+    "id": 3922117,
+    "dateadded": "2026-09-24 13:37:12",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 193,
+   "url": "http://truswallet.foundation/bins/parm6",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "botnetdomain",
+    "elf",
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3927526,
+    "dateadded": "2026-10-03 10:29:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 194,
+   "url": "https://fileupdates.blob.core.windows.net/link/update.msi",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "quickfix"
+   ],
+   "urlhaus": {
+    "id": 3919022,
+    "dateadded": "2026-09-19 15:48:22",
+    "status": "online"
+   }
+  },
+  {
+   "id": 195,
+   "url": "https://get.actiated.win/",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ascii",
+    "fakemas",
+    "powershell",
+    "ps1",
+    "ua-ps"
+   ],
+   "urlhaus": {
+    "id": 3917050,
+    "dateadded": "2026-09-15 15:19:15",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 196,
+   "url": "https://nordertextil.de/t/pcmd2",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "ClickFix",
+    "DEU",
+    "exe",
+    "Loader",
+    "powershell"
+   ],
+   "urlhaus": {
+    "id": 3922430,
+    "dateadded": "2026-09-25 06:23:13",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 197,
+   "url": "https://www.minecraft-cheats.com/downloads/riftclient.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "java",
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3919044,
+    "dateadded": "2026-09-19 18:03:17",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 198,
+   "url": "https://astroliper.ac/pack/agent/nodewatchd-linux-riscv64",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "elf",
+    "ssh"
+   ],
+   "urlhaus": {
+    "id": 3947359,
+    "dateadded": "2026-10-10 05:49:22",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 199,
+   "url": "http://crystalbranchtw.blog/nshksh4",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "mirai"
+   ],
+   "urlhaus": {
+    "id": 3924484,
+    "dateadded": "2026-09-28 18:41:25",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 200,
+   "url": "https://freeclients.net/downloads/KrispyClient-1.21_2.jar",
+   "label": "malicious",
+   "source": "urlhaus",
+   "stratum": "dedicated_domain",
+   "threat": "malware_download",
+   "tags": [
+    "jar",
+    "SilentNet"
+   ],
+   "urlhaus": {
+    "id": 3921385,
+    "dateadded": "2026-09-23 07:23:23",
+    "status": "offline"
+   }
+  },
+  {
+   "id": 201,
+   "url": "https://mixpanel.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 816
+   }
+  },
+  {
+   "id": 202,
+   "url": "https://ampproject.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 482
+   }
+  },
+  {
+   "id": 203,
+   "url": "https://eu-1-id5-sync.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 930
+   }
+  },
+  {
+   "id": 204,
+   "url": "https://scribd.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 518
+   }
+  },
+  {
+   "id": 205,
+   "url": "https://zillow.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 792
+   }
+  },
+  {
+   "id": 206,
+   "url": "https://dns-parking.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 136
+   }
+  },
+  {
+   "id": 207,
+   "url": "https://www.gov.uk/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 302
+   }
+  },
+  {
+   "id": 208,
+   "url": "https://rlcdn.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 617
+   }
+  },
+  {
+   "id": 209,
+   "url": "https://tailscale.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 949
+   }
+  },
+  {
+   "id": 210,
+   "url": "https://mcafee.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 493
+   }
+  },
+  {
+   "id": 211,
+   "url": "https://youtube.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 10
+   }
+  },
+  {
+   "id": 212,
+   "url": "https://media.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 431
+   }
+  },
+  {
+   "id": 213,
+   "url": "https://skyhigh.cloud/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 414
+   }
+  },
+  {
+   "id": 214,
+   "url": "https://elmundo.es/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 1000
+   }
+  },
+  {
+   "id": 215,
+   "url": "https://crwdcntrl.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 781
+   }
+  },
+  {
+   "id": 216,
+   "url": "https://ddnss.de/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 791
+   }
+  },
+  {
+   "id": 217,
+   "url": "https://www.gov.br/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 879
+   }
+  },
+  {
+   "id": 218,
+   "url": "https://mit.edu/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 223
+   }
+  },
+  {
+   "id": 219,
+   "url": "https://fbcdn.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 12
+   }
+  },
+  {
+   "id": 220,
+   "url": "https://go-mpulse.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 953
+   }
+  },
+  {
+   "id": 221,
+   "url": "https://android.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 163
+   }
+  },
+  {
+   "id": 222,
+   "url": "https://me.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 847
+   }
+  },
+  {
+   "id": 223,
+   "url": "https://oraclecloud.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 572
+   }
+  },
+  {
+   "id": 224,
+   "url": "https://substack.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 446
+   }
+  },
+  {
+   "id": 225,
+   "url": "https://steamserver.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 213
+   }
+  },
+  {
+   "id": 226,
+   "url": "https://pangle.io/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 443
+   }
+  },
+  {
+   "id": 227,
+   "url": "https://whatsapp.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 57
+   }
+  },
+  {
+   "id": 228,
+   "url": "https://featureassets.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 835
+   }
+  },
+  {
+   "id": 229,
+   "url": "https://akam.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 74
+   }
+  },
+  {
+   "id": 230,
+   "url": "https://bestbuy.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 797
+   }
+  },
+  {
+   "id": 231,
+   "url": "https://corriere.it/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 970
+   }
+  },
+  {
+   "id": 232,
+   "url": "https://markmonitor.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 494
+   }
+  },
+  {
+   "id": 233,
+   "url": "https://adsrvr.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 366
+   }
+  },
+  {
+   "id": 234,
+   "url": "https://shopify.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 170
+   }
+  },
+  {
+   "id": 235,
+   "url": "https://gosuslugi.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 521
+   }
+  },
+  {
+   "id": 236,
+   "url": "https://lefigaro.fr/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 833
+   }
+  },
+  {
+   "id": 237,
+   "url": "https://outlook.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 122
+   }
+  },
+  {
+   "id": 238,
+   "url": "https://it.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 914
+   }
+  },
+  {
+   "id": 239,
+   "url": "https://spov-msedge.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 238
+   }
+  },
+  {
+   "id": 240,
+   "url": "https://vimeo.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 85
+   }
+  },
+  {
+   "id": 241,
+   "url": "https://timeweb.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 411
+   }
+  },
+  {
+   "id": 242,
+   "url": "https://meraki.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 243
+   }
+  },
+  {
+   "id": 243,
+   "url": "https://mikrotik.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 543
+   }
+  },
+  {
+   "id": 244,
+   "url": "https://naver.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 351
+   }
+  },
+  {
+   "id": 245,
+   "url": "https://eye4.cn/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 470
+   }
+  },
+  {
+   "id": 246,
+   "url": "https://mozilla.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 89
+   }
+  },
+  {
+   "id": 247,
+   "url": "https://sharethrough.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 659
+   }
+  },
+  {
+   "id": 248,
+   "url": "https://aliyun.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 335
+   }
+  },
+  {
+   "id": 249,
+   "url": "https://huawei.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 445
+   }
+  },
+  {
+   "id": 250,
+   "url": "https://vidaahub.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 577
+   }
+  },
+  {
+   "id": 251,
+   "url": "https://coupang.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 917
+   }
+  },
+  {
+   "id": 252,
+   "url": "https://asus.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 746
+   }
+  },
+  {
+   "id": 253,
+   "url": "https://inmobi.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 309
+   }
+  },
+  {
+   "id": 254,
+   "url": "https://wps.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 605
+   }
+  },
+  {
+   "id": 255,
+   "url": "https://marriott.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 719
+   }
+  },
+  {
+   "id": 256,
+   "url": "https://applovin.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 196
+   }
+  },
+  {
+   "id": 257,
+   "url": "https://loc.gov/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 661
+   }
+  },
+  {
+   "id": 258,
+   "url": "https://app-analytics-services.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 165
+   }
+  },
+  {
+   "id": 259,
+   "url": "https://washingtonpost.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 367
+   }
+  },
+  {
+   "id": 260,
+   "url": "https://adriver.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_top_1k",
+   "tranco": {
+    "rank": 548
+   }
+  },
+  {
+   "id": 261,
+   "url": "https://albumoftheyear.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 6933
+   }
+  },
+  {
+   "id": 262,
+   "url": "https://alice.it/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 4809
+   }
+  },
+  {
+   "id": 263,
+   "url": "https://ozon.by/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7357
+   }
+  },
+  {
+   "id": 264,
+   "url": "https://tfkc.de/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3448
+   }
+  },
+  {
+   "id": 265,
+   "url": "https://bilivideo.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 4868
+   }
+  },
+  {
+   "id": 266,
+   "url": "https://theporndude.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 6447
+   }
+  },
+  {
+   "id": 267,
+   "url": "https://upmusics.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8567
+   }
+  },
+  {
+   "id": 268,
+   "url": "https://playrix.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 1012
+   }
+  },
+  {
+   "id": 269,
+   "url": "https://boosty.to/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7055
+   }
+  },
+  {
+   "id": 270,
+   "url": "https://jailatm.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 9025
+   }
+  },
+  {
+   "id": 271,
+   "url": "https://weibo.cn/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2279
+   }
+  },
+  {
+   "id": 272,
+   "url": "https://canon.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 5112
+   }
+  },
+  {
+   "id": 273,
+   "url": "https://boingboing.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 5857
+   }
+  },
+  {
+   "id": 274,
+   "url": "https://uta-net.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7795
+   }
+  },
+  {
+   "id": 275,
+   "url": "https://courtlistener.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7144
+   }
+  },
+  {
+   "id": 276,
+   "url": "https://nouvelobs.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7193
+   }
+  },
+  {
+   "id": 277,
+   "url": "https://maharashtra.gov.in/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 6258
+   }
+  },
+  {
+   "id": 278,
+   "url": "https://readli.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8494
+   }
+  },
+  {
+   "id": 279,
+   "url": "https://jamb.gov.ng/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 9575
+   }
+  },
+  {
+   "id": 280,
+   "url": "https://mastercard.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2214
+   }
+  },
+  {
+   "id": 281,
+   "url": "https://azure-dns.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2533
+   }
+  },
+  {
+   "id": 282,
+   "url": "https://gmw.cn/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 6467
+   }
+  },
+  {
+   "id": 283,
+   "url": "https://bol.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 1016
+   }
+  },
+  {
+   "id": 284,
+   "url": "https://google.com.om/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 9320
+   }
+  },
+  {
+   "id": 285,
+   "url": "https://poznan.pl/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7623
+   }
+  },
+  {
+   "id": 286,
+   "url": "https://freilassing.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3434
+   }
+  },
+  {
+   "id": 287,
+   "url": "https://pitt.edu/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3113
+   }
+  },
+  {
+   "id": 288,
+   "url": "https://oppomobile.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3457
+   }
+  },
+  {
+   "id": 289,
+   "url": "https://s-microsoft.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3123
+   }
+  },
+  {
+   "id": 290,
+   "url": "https://vietnamnet.vn/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 5500
+   }
+  },
+  {
+   "id": 291,
+   "url": "https://trello.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 1937
+   }
+  },
+  {
+   "id": 292,
+   "url": "https://apkvision.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8367
+   }
+  },
+  {
+   "id": 293,
+   "url": "https://thousandeyes.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2198
+   }
+  },
+  {
+   "id": 294,
+   "url": "https://flashscore.es/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8817
+   }
+  },
+  {
+   "id": 295,
+   "url": "https://rottentomatoes.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2936
+   }
+  },
+  {
+   "id": 296,
+   "url": "https://pushwoosh.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3723
+   }
+  },
+  {
+   "id": 297,
+   "url": "https://uni-freiburg.de/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7227
+   }
+  },
+  {
+   "id": 298,
+   "url": "https://google.kz/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 7476
+   }
+  },
+  {
+   "id": 299,
+   "url": "https://sextb.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8369
+   }
+  },
+  {
+   "id": 300,
+   "url": "https://nic.do/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2492
+   }
+  },
+  {
+   "id": 301,
+   "url": "https://lazybumblebee.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 5433
+   }
+  },
+  {
+   "id": 302,
+   "url": "https://pagibigfundservices.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 1793
+   }
+  },
+  {
+   "id": 303,
+   "url": "https://huya.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 4626
+   }
+  },
+  {
+   "id": 304,
+   "url": "https://trustedstack.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2197
+   }
+  },
+  {
+   "id": 305,
+   "url": "https://libsyn.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 3013
+   }
+  },
+  {
+   "id": 306,
+   "url": "https://cointelegraph.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 5359
+   }
+  },
+  {
+   "id": 307,
+   "url": "https://lavoixdunord.fr/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 6203
+   }
+  },
+  {
+   "id": 308,
+   "url": "https://lotterypost.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 8014
+   }
+  },
+  {
+   "id": 309,
+   "url": "https://eurodns.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 2579
+   }
+  },
+  {
+   "id": 310,
+   "url": "https://afthemes.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_1k_10k",
+   "tranco": {
+    "rank": 9816
+   }
+  },
+  {
+   "id": 311,
+   "url": "https://cruisecritic.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 18016
+   }
+  },
+  {
+   "id": 312,
+   "url": "https://kayosports.com.au/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 84596
+   }
+  },
+  {
+   "id": 313,
+   "url": "https://thebostoncalendar.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 91266
+   }
+  },
+  {
+   "id": 314,
+   "url": "https://cycleai.ai/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 69914
+   }
+  },
+  {
+   "id": 315,
+   "url": "https://news.gov.hk/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 86185
+   }
+  },
+  {
+   "id": 316,
+   "url": "https://mvnrepository.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 18514
+   }
+  },
+  {
+   "id": 317,
+   "url": "https://actcklb6.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 88254
+   }
+  },
+  {
+   "id": 318,
+   "url": "https://demis.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 67313
+   }
+  },
+  {
+   "id": 319,
+   "url": "https://cdn-mirror.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 38240
+   }
+  },
+  {
+   "id": 320,
+   "url": "https://oxidesurvival.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 76778
+   }
+  },
+  {
+   "id": 321,
+   "url": "https://lotuscars.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 54056
+   }
+  },
+  {
+   "id": 322,
+   "url": "https://ddosa.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 87062
+   }
+  },
+  {
+   "id": 323,
+   "url": "https://ytyt000.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 88151
+   }
+  },
+  {
+   "id": 324,
+   "url": "https://cruzeirodosul.edu.br/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 52649
+   }
+  },
+  {
+   "id": 325,
+   "url": "https://mediasmart.es/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 31561
+   }
+  },
+  {
+   "id": 326,
+   "url": "https://fahrrad-xxl.de/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 53411
+   }
+  },
+  {
+   "id": 327,
+   "url": "https://fastgamernetwork.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 36396
+   }
+  },
+  {
+   "id": 328,
+   "url": "https://datenkollektiv.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 80234
+   }
+  },
+  {
+   "id": 329,
+   "url": "https://gobrightline.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 75245
+   }
+  },
+  {
+   "id": 330,
+   "url": "https://partaitogel79.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 96766
+   }
+  },
+  {
+   "id": 331,
+   "url": "https://bidmatrixdsp.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 31644
+   }
+  },
+  {
+   "id": 332,
+   "url": "https://63pokupki.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 52369
+   }
+  },
+  {
+   "id": 333,
+   "url": "https://atlaq.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 62694
+   }
+  },
+  {
+   "id": 334,
+   "url": "https://gdeltproject.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 90481
+   }
+  },
+  {
+   "id": 335,
+   "url": "https://tripura.gov.in/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 44198
+   }
+  },
+  {
+   "id": 336,
+   "url": "https://madura88hut.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 96045
+   }
+  },
+  {
+   "id": 337,
+   "url": "https://bebetei.ro/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 71588
+   }
+  },
+  {
+   "id": 338,
+   "url": "https://burgerking.com.br/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 64924
+   }
+  },
+  {
+   "id": 339,
+   "url": "https://atdmt.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 49241
+   }
+  },
+  {
+   "id": 340,
+   "url": "https://goodwill.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 55782
+   }
+  },
+  {
+   "id": 341,
+   "url": "https://topagrar.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 34975
+   }
+  },
+  {
+   "id": 342,
+   "url": "https://vacationstogo.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 19571
+   }
+  },
+  {
+   "id": 343,
+   "url": "https://aj2756.top/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 92327
+   }
+  },
+  {
+   "id": 344,
+   "url": "https://xn--t8jyc2es40mji1ahzq.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 98644
+   }
+  },
+  {
+   "id": 345,
+   "url": "https://thestreamingpanel.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 97995
+   }
+  },
+  {
+   "id": 346,
+   "url": "https://pcolle.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 70982
+   }
+  },
+  {
+   "id": 347,
+   "url": "https://theengagelab.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 12557
+   }
+  },
+  {
+   "id": 348,
+   "url": "https://nounou-top.fr/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 72023
+   }
+  },
+  {
+   "id": 349,
+   "url": "https://astonishingfood.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 66366
+   }
+  },
+  {
+   "id": 350,
+   "url": "https://usopen.org/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 21972
+   }
+  },
+  {
+   "id": 351,
+   "url": "https://a16z.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 15740
+   }
+  },
+  {
+   "id": 352,
+   "url": "https://w-moon.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 91913
+   }
+  },
+  {
+   "id": 353,
+   "url": "https://viajesfalabella.cl/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 66624
+   }
+  },
+  {
+   "id": 354,
+   "url": "https://plantasdecasas.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 87465
+   }
+  },
+  {
+   "id": 355,
+   "url": "https://directforgames.com/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 92457
+   }
+  },
+  {
+   "id": 356,
+   "url": "https://mvideoeldorado.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 31895
+   }
+  },
+  {
+   "id": 357,
+   "url": "https://zscalerten.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 18897
+   }
+  },
+  {
+   "id": 358,
+   "url": "https://midasplayer.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 12831
+   }
+  },
+  {
+   "id": 359,
+   "url": "https://vf-ua.net/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 47018
+   }
+  },
+  {
+   "id": 360,
+   "url": "https://ural.ru/",
+   "label": "benign",
+   "source": "tranco",
+   "stratum": "tranco_10k_100k",
+   "tranco": {
+    "rank": 60353
+   }
+  },
+  {
+   "id": 361,
+   "url": "https://github.com/git-for-windows/git/releases/download/v2.47.0.windows.1/Git-2.47.0-64-bit.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 362,
+   "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7/npp.8.7.Installer.x64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 363,
+   "url": "https://github.com/microsoft/terminal/releases/download/v1.21.2361.0/Microsoft.WindowsTerminal_1.21.2361.0_8wekyb3d8bbwe.msixbundle",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 364,
+   "url": "https://github.com/obsproject/obs-studio/releases/download/30.2.3/OBS-Studio-30.2.3-Windows-Installer.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 365,
+   "url": "https://github.com/keepassxreboot/keepassxc/releases/download/2.7.9/KeePassXC-2.7.9-Win64.msi",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 366,
+   "url": "https://github.com/PowerShell/PowerShell/releases/download/v7.4.5/PowerShell-7.4.5-win-x64.msi",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 367,
+   "url": "https://github.com/cli/cli/releases/download/v2.58.0/gh_2.58.0_windows_amd64.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 368,
+   "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-pc-windows-msvc.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 369,
+   "url": "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 370,
+   "url": "https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-windows-x86_64.msi",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 371,
+   "url": "https://github.com/ShareX/ShareX/releases/download/v16.1.0/ShareX-16.1.0-setup.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 372,
+   "url": "https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 373,
+   "url": "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 374,
+   "url": "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 375,
+   "url": "https://raw.githubusercontent.com/python-poetry/install.python-poetry.org/main/install-poetry.py",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 376,
+   "url": "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 377,
+   "url": "https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 378,
+   "url": "https://raw.githubusercontent.com/torvalds/linux/master/README",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 379,
+   "url": "https://raw.githubusercontent.com/microsoft/vscode/main/README.md",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 380,
+   "url": "https://gitlab.com/gitlab-org/gitlab-runner/-/raw/main/README.md",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 381,
+   "url": "https://gitlab.com/inkscape/inkscape/-/archive/master/inkscape-master.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 382,
+   "url": "https://www.python.org/ftp/python/3.12.7/python-3.12.7-amd64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 383,
+   "url": "https://nodejs.org/dist/v20.18.0/node-v20.18.0-x64.msi",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 384,
+   "url": "https://www.7-zip.org/a/7z2408-x64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 385,
+   "url": "https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 386,
+   "url": "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 387,
+   "url": "https://dl.google.com/chrome/install/latest/chrome_installer.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 388,
+   "url": "https://the.earth.li/~sgtatham/putty/latest/w64/putty.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 389,
+   "url": "https://download.sysinternals.com/files/ProcessExplorer.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 390,
+   "url": "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 391,
+   "url": "https://go.microsoft.com/fwlink/?LinkID=760868",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 392,
+   "url": "https://get.docker.com/",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 393,
+   "url": "https://sh.rustup.rs/",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 394,
+   "url": "https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 395,
+   "url": "https://bootstrap.pypa.io/get-pip.py",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 396,
+   "url": "https://downloads.raspberrypi.com/imager/imager_latest.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 397,
+   "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.11.tar.xz",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 398,
+   "url": "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.30/bin/apache-tomcat-10.1.30.zip",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 399,
+   "url": "https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 400,
+   "url": "https://files.pythonhosted.org/packages/source/r/requests/requests-2.32.3.tar.gz",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 401,
+   "url": "https://registry.npmjs.org/express/-/express-4.21.1.tgz",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 402,
+   "url": "https://www.dropbox.com/download?plat=win",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 403,
+   "url": "https://zoom.us/client/latest/ZoomInstallerFull.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 404,
+   "url": "https://download.teamviewer.com/download/TeamViewer_Setup_x64.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  },
+  {
+   "id": 405,
+   "url": "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-701.exe",
+   "label": "benign",
+   "source": "curated",
+   "stratum": "download_on_shared_or_vendor_host"
+  }
+ ]
+}
