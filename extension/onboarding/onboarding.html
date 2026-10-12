@@ -23,9 +23,10 @@
       <li>If a page says your computer has a virus and to call a number, we'll tell you it's fake.</li>
       <li>Click the shield button at the top right of the browser any time to check the website you're on.</li>
     </ul>
-    <p class="small">Your privacy: all the checking happens on this computer. Nothing about the websites you visit is sent anywhere. Once a day it downloads a public list of known scam websites.</p>
+    <p class="small" id="privacy-local">Your privacy: all the checking happens on this computer. Nothing about the websites you visit is sent anywhere. Once a day it downloads a public list of known scam websites.</p>
+    <p class="small" id="privacy-remote" hidden>Your privacy: well-known websites like your bank or email are checked only on this computer. For other websites, a short summary (the web address without any personal parts, the page title and the start of its text) is sent to our scam checker. What you type is never sent. Once a day it downloads a public list of known scam websites.</p>
     <button id="done" class="btn-safe" type="button">OK, got it</button>
   </main>
-  <script src="onboarding.js"></script>
+  <script type="module" src="onboarding.js"></script>
 </body>
 </html>

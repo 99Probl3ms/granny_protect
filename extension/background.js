@@ -1,9 +1,14 @@
 // Service worker: owns lists and verdicts. Content scripts send page features
 // here; we decide and reply. Navigations to known-bad sites are redirected to
-// the block page before the site loads.
+// the block page before the site loads. Pages that aren't trusted or
+// blocklisted are also sent (as a redacted summary) to the backend, which asks
+// the Jev decision model (Tier 3).
 
 import { buildBlocklist } from './lib/lists.js';
-import { decide, VERDICT } from './lib/fusion.js';
+import { applyModel, decide, VERDICT } from './lib/fusion.js';
+import { classifyRemote } from './lib/apiClient.js';
+import { DEFAULT_BACKEND_URL, GRAY_ZONE, GRAY_ZONE_ONLY, MODEL_WAIT_MS } from './lib/config.js';
+import { createTier3 } from './lib/tier3.js';
 import { describe } from './lib/messages.js';
 import { normalizeHost, registrableDomain } from './lib/domain.js';
 
@@ -44,9 +49,39 @@ async function allowForSession(domain) {
   if (!list.includes(domain)) await chrome.storage.session.set({ allowedDomains: [...list, domain] });
 }
 
-async function evaluate(url, page) {
+// ---------------------------------------------------------------------------
+// Tier 3 (decision model via the backend).
+
+async function getBackendUrl() {
+  const { backendUrl } = await chrome.storage.local.get('backendUrl');
+  return typeof backendUrl === 'string' ? backendUrl : DEFAULT_BACKEND_URL;
+}
+
+/** Random per-install ID, used by the backend for rate limiting only. */
+async function getInstallId() {
+  const { installId } = await chrome.storage.local.get('installId');
+  if (installId) return installId;
+  const id = crypto.randomUUID();
+  await chrome.storage.local.set({ installId: id });
+  return id;
+}
+
+const tier3 = createTier3({
+  getBackendUrl,
+  classify: async (summary, backendUrl) => classifyRemote(summary, { backendUrl, installId: await getInstallId() }),
+  grayZoneOnly: GRAY_ZONE_ONLY,
+  grayZone: GRAY_ZONE,
+  waitMs: MODEL_WAIT_MS,
+});
+
+/**
+ * Verdict for a URL, and for its page once loaded. With `useModel`, eligible
+ * pages are also checked by Tier 3.
+ */
+async function evaluate(url, page, { useModel = false } = {}) {
   const { userTrusted, blocklist } = await loadState();
-  const verdict = decide({ url, page, userTrusted, blocklist });
+  let verdict = decide({ url, page, userTrusted, blocklist });
+  if (useModel) verdict = applyModel(verdict, await tier3.ask(url, page, verdict));
   const allowed = await sessionAllowed();
   verdict.overridden = verdict.action !== VERDICT.ALLOW && allowed.includes(verdict.domain);
   return verdict;
@@ -117,7 +152,7 @@ const handlers = {
     if (!sender.tab || sender.frameId !== 0) return null;
     // Judge the URL the browser reports for this frame, not one the page claims.
     const url = sender.url;
-    const verdict = await evaluate(url, { ...msg.features, url });
+    const verdict = await evaluate(url, { ...msg.features, url }, { useModel: true });
     await rememberVerdict(sender.tab.id, url, verdict);
     return { verdict, text: describe(verdict) };
   },

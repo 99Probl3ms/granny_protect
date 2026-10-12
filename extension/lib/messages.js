@@ -7,6 +7,7 @@ const HEADLINES = {
     : 'This page may be trying to steal your password.',
   tech_support_scam: () => 'This is a fake warning. Your computer is fine.',
   payment_scam: () => 'This page looks like a scam asking for money.',
+  fake_shop: () => 'This looks like a fake shop.',
   suspicious_site: () => 'This website looks dangerous.',
 };
 
@@ -18,6 +19,8 @@ const ADVICE = {
     "Don't call any phone number on this page and don't let anyone connect to your computer. Real companies like Microsoft and Apple never show warnings like this. Just close the page.",
   payment_scam: () =>
     'No real company or government office asks to be paid in gift cards, Bitcoin or wire transfers. Don\'t send money or read out any codes.',
+  fake_shop: () =>
+    "Prices that look too good to be true usually are. Don't enter your card number here. If you want to buy this, use a shop you already know.",
   suspicious_site: () => "Don't type any personal information here. If you're not sure, ask someone you trust.",
 };
 
@@ -44,6 +47,7 @@ const REASONS = {
   forced_fullscreen: 'It took over your whole screen.',
   risky_tld: 'The web address ending is often used by scam sites.',
   free_hosting: 'It\'s on a free website service that scammers often use.',
+  model_flagged: 'Our scam checker looked at this page and thinks it is a trick.',
 };
 
 /** Build user-facing text from a verdict. */

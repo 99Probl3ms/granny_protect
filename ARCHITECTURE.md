@@ -4,9 +4,9 @@ A browser extension that protects less technical users (think: grandparents) fro
 phishing and scam pages. It layers cheap, deterministic checks with a fast
 decision model (TypeSafe's **Jev**) used only where the cheap checks are unsure.
 
-> Status: design draft. Nothing here is implemented yet. Jev API details below are
-> illustrative; confirm request/response shapes against TypeSafe's docs before
-> building the client.
+> Status: roadmap steps 1 (local MVP) and 2 (Jev, Tier 3) are implemented in
+> `extension/` and `backend/`. See §11 for where the implementation differs from
+> this draft.
 
 ---
 
@@ -284,3 +284,30 @@ Cloudflare Worker or Vercel function.
 - **Budget: not a constraint for the POC.** Call Jev on every page that isn't on
   the allowlist (not just the gray zone) so we can measure how it does against
   the heuristics alone. Re-tighten to gray-zone-only before any wider release.
+
+---
+
+## 11. Tier 3 implementation notes
+
+- **Jev API.** The backend calls `POST https://openrouter.ai/api/alpha/decisions`
+  with `{ model: "typesafe/jev-1.13", state: { page: summary }, questions }`
+  and one request carries all three questions (`phish` Noul, `category`
+  Choice, `pressure` Score). See `backend/README.md`.
+- **Code layout.** The repo stayed plain JavaScript with no build step, so the
+  files are `extension/lib/{summary,apiClient,tier3,config}.js` and
+  `backend/src/{handler,jev,decisionModel}.js`, with `backend/server.js` (Node)
+  and `backend/worker.js` (Cloudflare) entry points.
+- **Fusion.** `risk = 0.35 * heuristic_risk + 0.65 * p_phish`
+  (`applyModel` in `extension/lib/fusion.js`). The model can raise or lower
+  risk: on its own it can WARN but never BLOCK, and it can lower a page the
+  heuristics would block only to a WARN. Trusted and blocklisted verdicts are
+  never sent to it. The model's category is used for the warning text when its
+  confidence is ≥ 0.5.
+- **Latency.** The content script holds sensitive fields ("Checking this
+  website…") while a verdict is pending. The background waits up to 1.5 s for
+  Jev, then answers from heuristics; the Jev call keeps running and its result
+  is cached (1 h, per summary) for the next check of that page.
+- **POC scope.** Every non-trusted page goes to Tier 3 (§10). Flip
+  `GRAY_ZONE_ONLY` in `extension/lib/config.js` before a wider release.
+- **Not yet built:** domain-age / CT lookups, the feedback endpoint, a shared
+  server-side verdict cache, and trusted-contact alerts.

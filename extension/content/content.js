@@ -4,6 +4,8 @@
 //  2. If the page is risky, shows a warning and locks password / card /
 //     gift-card fields until the user deliberately chooses to continue.
 //  3. Re-checks when the page adds a sensitive field later (single-page apps).
+//  4. While a check is still running (the background may be waiting on the
+//     Tier 3 model), holds typing in sensitive fields and says "Checking…".
 
 (() => {
   if (window.top !== window || window.__grannyProtect) return;
@@ -11,6 +13,9 @@
 
   const MAX_TEXT = 6000;
   const MAX_RECHECKS = 5;
+  // Never hold the user's typing longer than this, even if the background
+  // doesn't answer (it gives up on the model well before this).
+  const MAX_PENDING_MS = 4000;
 
   const GIFT_RE = /gift.?card|claim.?code|redemption|card.?pin|scratch/i;
   const CARD_RE = /card.?num|cc.?num|credit.?card|debit.?card|\bcvv\b|\bcvc\b|security.?code|expir/i;
@@ -22,6 +27,9 @@
     verdict: null,       // last verdict from the background
     text: null,          // plain-language strings for it
     locked: false,       // sensitive inputs blocked until the user decides
+    pending: false,      // a verdict is being computed; sensitive inputs held
+    heldField: null,     // field the user tried to use while pending
+    checking: null,      // "Checking this website…" note
     overlay: null,
     fullscreen: false,
     rechecks: 0,
@@ -103,49 +111,85 @@
   // -------------------------------------------------------------------------
   // Talking to the background
 
+  let analysisSeq = 0;
+
   async function analyze() {
+    const seq = ++analysisSeq;
+    state.pending = true;
+    const giveUp = setTimeout(() => seq === analysisSeq && endPending(), MAX_PENDING_MS);
     let res;
     try {
       res = await chrome.runtime.sendMessage({ type: 'analyzePage', features: extractFeatures() });
     } catch {
-      return; // extension reloaded / background unavailable
+      res = null; // extension reloaded / background unavailable
+    } finally {
+      clearTimeout(giveUp);
     }
-    if (!res) return;
+    if (seq !== analysisSeq) return; // a newer check is running
+    if (!res) {
+      endPending();
+      return;
+    }
     state.verdict = res.verdict;
     state.text = res.text;
     const risky = res.verdict.action !== 'allow' && !res.verdict.overridden;
     if (risky) {
       state.locked = true;
+      state.heldField = null;
       showOverlay();
     } else {
       state.locked = false;
       removeOverlay();
     }
+    endPending();
+  }
+
+  function endPending() {
+    state.pending = false;
+    removeChecking();
+    const field = state.heldField;
+    state.heldField = null;
+    if (field && !state.locked && field.isConnected) field.focus();
   }
 
   // -------------------------------------------------------------------------
   // Input guard: while locked, sensitive fields can't be focused or typed in.
 
+  // While a check is pending, hold the field and say we're checking; once the
+  // verdict arrives the field is refocused (if safe) or the warning shown.
+  function hold(target) {
+    if (state.locked) {
+      showOverlay();
+    } else {
+      state.heldField = target;
+      showChecking();
+    }
+  }
+
+  function guarded() {
+    return state.locked || state.pending;
+  }
+
   function onFocusIn(e) {
-    if (!state.locked || !sensitiveKind(e.target)) return;
+    if (!guarded() || !sensitiveKind(e.target)) return;
     e.target.blur();
-    showOverlay();
+    hold(e.target);
   }
 
   function onKeyDown(e) {
-    if (!state.locked || !sensitiveKind(e.target)) return;
+    if (!guarded() || !sensitiveKind(e.target)) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    showOverlay();
+    hold(e.target);
   }
 
   function onSubmit(e) {
-    if (!state.locked) return;
+    if (!guarded()) return;
     const form = e.target;
     if (form instanceof HTMLFormElement && [...form.elements].some((el) => sensitiveKind(el))) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      showOverlay();
+      hold(null);
     }
   }
 
@@ -199,6 +243,9 @@
     .confirm p { font-size: 18px; }
     .confirm button { font-size: 18px; padding: 10px 16px; border-radius: 8px; border: 1px solid #999;
       background: #fff; cursor: pointer; margin-right: 8px; }
+    .checking { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 2147483647;
+      background: #1a1a1a; color: #fff; font: 600 20px/1.3 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      padding: 14px 22px; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
     @media (prefers-color-scheme: dark) {
       .card { background: #1f1f1f; color: #f2f2f2; }
       ul { color: #ccc; } .continue { color: #bbb; }
@@ -275,6 +322,21 @@
   function removeOverlay() {
     state.overlay?.remove();
     state.overlay = null;
+  }
+
+  function showChecking() {
+    if (state.checking || state.overlay) return;
+    const host = el('div', { 'data-granny-protect-checking': '' });
+    const root = host.attachShadow({ mode: 'closed' });
+    root.appendChild(el('style', {}, STYLE));
+    root.appendChild(el('div', { class: 'checking', role: 'status' }, 'Checking this website\u2026'));
+    document.documentElement.appendChild(host);
+    state.checking = host;
+  }
+
+  function removeChecking() {
+    state.checking?.remove();
+    state.checking = null;
   }
 
   // -------------------------------------------------------------------------
