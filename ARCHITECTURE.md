@@ -4,9 +4,10 @@ A browser extension that protects less technical users (think: grandparents) fro
 phishing and scam pages. It layers cheap, deterministic checks with a fast
 decision model (TypeSafe's **Jev**) used only where the cheap checks are unsure.
 
-> Status: design draft. Nothing here is implemented yet. Jev API details below are
-> illustrative; confirm request/response shapes against TypeSafe's docs before
-> building the client.
+> Status: roadmap phase 1 (local-only MVP: Tiers 0–2, input guard, warnings) is
+> implemented in `extension/`; see README.md. The backend and Jev (Tier 3) are not
+> built yet. Jev API details below are illustrative; confirm request/response
+> shapes against TypeSafe's docs before building the client.
 
 ---
 
