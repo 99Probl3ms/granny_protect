@@ -184,6 +184,7 @@ Node 20 or later.
 npm test            # unit tests, including every entry in the destination test set
 npm run test:policy # DOM-level password-policy regression tests (Playwright)
 npm run eval        # confusion matrix for the destination test set
+npm run eval:jev -- --baseline tests/fixtures/jev-prompt-baseline.json --repeats 2 --output /tmp/jev-results.json # live synthetic prompt comparison; needs TYPESAFE_API_KEY
 npm run test:e2e    # loads the extension in Chromium: smoke test, navigation matrix, review flows
 TYPESAFE_API_KEY=... npm run test:jev   # same browser setup against the real Jev (network, a few calls)
 ```
@@ -193,6 +194,14 @@ TYPESAFE_API_KEY=... npm run test:jev   # same browser setup against the real Je
 real answers: PayPal look-alikes blocked by link and by typed address, an
 address Jev is unsure about kept on hold, and a fake virus-warning page
 blocked from its content. It skips itself when no key is set.
+
+`eval:jev` compares the current questions with the saved original prompt on
+22 synthetic, sanitized review requests. It reports raw scam probabilities,
+the decisions actually applied by the browser, token usage and latency.
+It uses the pinned model and makes paid API calls (88 with the command above).
+The labels cover phishing, benign lookalikes, prompt injection and sparse
+URL-only evidence. These are development cases, not an independent accuracy
+benchmark; see [the measured comparison](docs/jev-prompt-evaluation.md).
 
 The destination test set (`tests/fixtures/destinations.js`) holds malicious,
 benign and internal addresses with the decision each should get. Malicious
