@@ -185,7 +185,14 @@ npm test            # unit tests, including every entry in the destination test 
 npm run test:policy # DOM-level password-policy regression tests (Playwright)
 npm run eval        # confusion matrix for the destination test set
 npm run test:e2e    # loads the extension in Chromium: smoke test, navigation matrix, review flows
+TYPESAFE_API_KEY=... npm run test:jev   # same browser setup against the real Jev (network, a few calls)
 ```
+
+`test:e2e` reviews with a stand-in model and needs no key or network.
+`test:jev` sends the review service's requests to TypeSafe and checks Jev's
+real answers: PayPal look-alikes blocked by link and by typed address, an
+address Jev is unsure about kept on hold, and a fake virus-warning page
+blocked from its content. It skips itself when no key is set.
 
 The destination test set (`tests/fixtures/destinations.js`) holds malicious,
 benign and internal addresses with the decision each should get. Malicious
