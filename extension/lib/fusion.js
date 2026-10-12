@@ -23,7 +23,7 @@ export const VERDICT = { ALLOW: 'allow', REVIEW: 'needs_review', BLOCK: 'block' 
  * @property {'allow'|'needs_review'|'block'} action
  * @property {number} risk
  * @property {'policy'|'internal'|'trusted'|'blocklist'|'heuristics'} source
- * @property {'insecure_password'|'credential_phish'|'tech_support_scam'|'payment_scam'|'suspicious_site'|null} category
+ * @property {'insecure_password'|'credential_phish'|'tech_support_scam'|'payment_scam'|'malware_download'|'suspicious_site'|null} category
  * @property {boolean} [policy]          true when an enterprise rule decided; no override
  * @property {string|undefined} brand     brand being impersonated, if any
  * @property {{code:string, weight:number, detail?:string}[]} reasons

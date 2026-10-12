@@ -13,7 +13,7 @@
 import { reviewKey } from './sanitize.js';
 
 export const DECISIONS = ['allow', 'needs_review', 'block'];
-export const CATEGORIES = ['credential_phish', 'tech_support_scam', 'payment_scam', 'suspicious_site'];
+export const CATEGORIES = ['credential_phish', 'tech_support_scam', 'payment_scam', 'malware_download', 'suspicious_site'];
 
 /**
  * @typedef {Object} Review

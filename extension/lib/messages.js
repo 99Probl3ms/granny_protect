@@ -8,6 +8,7 @@ const HEADLINES = {
     : 'This page may be trying to steal your password.',
   tech_support_scam: () => 'This is a fake warning. Your computer is fine.',
   payment_scam: () => 'This page looks like a scam asking for money.',
+  malware_download: () => 'This download could harm your computer.',
   suspicious_site: () => 'This website looks dangerous.',
 };
 
@@ -21,6 +22,8 @@ const ADVICE = {
     "Don't call any phone number on this page and don't let anyone connect to your computer. Real companies like Microsoft and Apple never show warnings like this. Just close the page.",
   payment_scam: () =>
     'No real company or government office asks to be paid in gift cards, Bitcoin or wire transfers. Don\'t send money or read out any codes.',
+  malware_download: () =>
+    "Don't download or open anything from this website. If you need a program, get it from the company's own website or your computer's app store.",
   suspicious_site: () => "Don't type any personal information here. If you're not sure, ask someone you trust.",
 };
 
@@ -63,6 +66,7 @@ const REVIEW_HEADLINES = {
     : "We couldn't confirm this website is safe.",
   tech_support_scam: () => 'This page may be a fake computer warning.',
   payment_scam: () => 'This page may be a scam asking for money.',
+  malware_download: () => 'This download may not be safe.',
   suspicious_site: () => "We couldn't confirm this website is safe.",
 };
 
@@ -72,6 +76,7 @@ const REVIEW_ADVICE = {
     : "If you weren't expecting this website, go back. Don't type passwords or card numbers here unless you're sure.",
   tech_support_scam: ADVICE.tech_support_scam,
   payment_scam: ADVICE.payment_scam,
+  malware_download: ADVICE.malware_download,
   suspicious_site: () => "It has some warning signs. If you weren't expecting to visit it, go back.",
 };
 

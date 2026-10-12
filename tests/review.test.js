@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildReviewRequest, redactPath, redactText, reviewKey } from '../extension/lib/sanitize.js';
+import { buildReviewRequest, LIMITS, redactPath, redactText, reviewKey } from '../extension/lib/sanitize.js';
 import { applyReview, createReviewer, validateReview } from '../extension/lib/reviewClient.js';
 import { decideUrl } from '../extension/lib/fusion.js';
 import { cleanRequest, createReviewServer } from '../server/server.mjs';
@@ -54,6 +54,15 @@ test('percent-encoded identifiers in paths are redacted after decoding', () => {
   assert.equal(redactPath('/acct/12%33%345'), '/acct/[number]');
   assert.equal(redactPath('/a/%2540example.com'), '/a/[id]', 'double-encoded');
   assert.equal(redactPath('/a%ZZ/b'), '/[id]/b', 'malformed');
+});
+
+test('program and archive file types survive redaction and truncation', () => {
+  assert.equal(redactPath('/dl/stock_indian_analyst_v3.4.zip'), '/dl/[id].4.zip');
+  assert.equal(redactPath('/x/%ZZsetup.exe'), '/x/[id].exe', 'malformed segment keeps its type');
+  assert.equal(redactPath('/x/a%2525b.jar'), '/x/[id].jar', 'double-encoded segment keeps its type');
+  const long = redactPath(`/${'segment/'.repeat(20)}Installer.msi`);
+  assert.ok(long.endsWith('….msi') && long.length <= LIMITS.path + 1, long);
+  assert.equal(redactPath('/a/%2540example.com'), '/a/[id]', 'domain endings are not file types');
 });
 
 test('redaction keeps ordinary words', () => {
@@ -206,11 +215,12 @@ test('Jev request: the sanitized request is the state, with a Noul and a Choice 
 
 test('Jev answers map to reviews the client accepts', () => {
   assert.deepEqual(toReview(jevAnswer(0.98, 'credential_phish')),
-    { decision: 'block', confidence: 0.96, category: 'credential_phish', model: 'jev-1.13.0' });
+    { decision: 'block', confidence: 0.96, category: 'credential_phish', probability: 0.98, model: 'jev-1.13.0' });
   assert.deepEqual(toReview(jevAnswer(0.03, 'credential_phish')),
-    { decision: 'allow', confidence: 0.94, category: null, model: 'jev-1.13.0' });
+    { decision: 'allow', confidence: 0.94, category: null, probability: 0.03, model: 'jev-1.13.0' });
   assert.equal(toReview(jevAnswer(0.5)).decision, 'needs_review');
   assert.equal(toReview(jevAnswer(0.9, 'none')).category, null);
+  assert.equal(toReview(jevAnswer(0.9, 'malware_download')).category, 'malware_download');
   for (const p of [0, 0.1, 0.15, 0.5, 0.85, 0.9, 1]) {
     for (const choice of Object.keys(QUESTIONS.category.criteria)) {
       assert.ok(validateReview(toReview(jevAnswer(p, choice))), `p=${p} ${choice}`);

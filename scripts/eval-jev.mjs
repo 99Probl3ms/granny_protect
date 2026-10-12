@@ -8,6 +8,9 @@
 //   TYPESAFE_API_KEY=... npm run eval:jev -- --limit 20          a stratified 20
 //   options: --dataset <file>  --concurrency <n> (default 4)  --out <results.jsonl>
 //
+// The report adds a histogram of Jev's raw probability and what other block
+// and allow cutoffs would have done, for tuning THRESHOLDS in jev.mjs.
+//
 // Costs one Jev call per entry. Nothing is fetched from the URLs themselves.
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -110,6 +113,26 @@ malicious blocked or held:         ${count(mal, 'block', 'needs_review')}/${mal.
 benign blocked (false block):      ${count(ben, 'block')}/${ben.length} (${pct(count(ben, 'block'), ben.length)})
 benign held or blocked:            ${count(ben, 'block', 'needs_review')}/${ben.length} (${pct(count(ben, 'block', 'needs_review'), ben.length)})
 errors:                            ${results.filter((r) => r.error).length}`);
+
+// Where Jev's probabilities land, and what other cutoffs would have done.
+// The current ones are THRESHOLDS in server/models/jev.mjs.
+const BUCKETS = 10;
+const bucketOf = (p) => Math.min(Math.floor(p * BUCKETS), BUCKETS - 1);
+console.log(`\n${pad('probability', 14)}${pad('malicious', 12)}benign`);
+for (let b = 0; b < BUCKETS; b++) {
+  const inBucket = (rows) => rows.filter((r) => bucketOf(r.probability) === b).length;
+  console.log(`${pad(`${(b / BUCKETS).toFixed(1)}-${((b + 1) / BUCKETS).toFixed(1)}`, 14)}${pad(inBucket(mal), 12)}${inBucket(ben)}`);
+}
+console.log(`\n${pad('block if p >=', 16)}${pad('malicious blocked', 22)}benign blocked`);
+for (const cut of [0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9]) {
+  const blocked = (rows) => rows.filter((r) => r.probability >= cut).length;
+  console.log(`${pad(cut, 16)}${pad(`${blocked(mal)} (${pct(blocked(mal), mal.length)})`, 22)}${blocked(ben)} (${pct(blocked(ben), ben.length)})`);
+}
+console.log(`\n${pad('allow if p <=', 16)}${pad('malicious allowed', 22)}benign allowed`);
+for (const cut of [0.1, 0.15, 0.2, 0.3, 0.4, 0.5]) {
+  const allowed = (rows) => rows.filter((r) => r.probability <= cut).length;
+  console.log(`${pad(cut, 16)}${pad(`${allowed(mal)} (${pct(allowed(mal), mal.length)})`, 22)}${allowed(ben)} (${pct(allowed(ben), ben.length)})`);
+}
 
 const categories = Object.entries(groupBy(mal.filter((r) => r.category), (r) => r.category))
   .map(([c, rows]) => `${c} ${rows.length}`);

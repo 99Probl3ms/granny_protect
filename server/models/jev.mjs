@@ -7,11 +7,13 @@
 //
 // Two questions run in parallel on the same state:
 //   - phish (Noul): is this destination trying to trick the user into giving
-//     credentials, money or remote access? -> p
+//     credentials, money or remote access, or into running harmful software? -> p
 //   - category (Choice): which kind of scam, with a "none" option
 // Mapping (thresholds to be tuned on tests/fixtures/destinations.js):
 //   p >= 0.85 -> block, p <= 0.15 -> allow, otherwise needs_review;
-//   confidence = how far p is from the undecided middle, 2 * |p - 0.5|.
+//   confidence = how far p is from the undecided middle, 2 * |p - 0.5|;
+//   probability = p itself, for evaluation and threshold tuning (the review
+//   service does not forward it to the extension).
 //
 // Jev answers only from the options defined here, never free text, so page
 // text in the state can at most skew a probability. Question keys are not
@@ -43,6 +45,9 @@ export const CATEGORY_CRITERIA = {
   payment_scam:
     'Asks for money or "fees" by gift card, cryptocurrency, wire or money transfer: fake prizes, refunds, ' +
     'fines, parcel fees or invoices',
+  malware_download:
+    'Gets the visitor to download or open a harmful file or program: fake installers or updates, cracked ' +
+    'software, game cheats or mods, or a bare executable or script on a numeric address or throwaway domain',
   suspicious_site:
     'Another kind of deception: a fake shop, a fake government or bank page, or impersonation that fits none of the above',
   none: 'Not trying to deceive the visitor: an ordinary website, including real login pages, shops and support pages',
@@ -53,7 +58,8 @@ export const QUESTIONS = {
     type: 'noul',
     instructions:
       `${STATE_NOTE} Is this destination trying to trick the visitor into giving away passwords, card or bank ` +
-      'details, personal information, money, gift-card codes, or remote access to their computer?',
+      'details, personal information, money, gift-card codes, or remote access to their computer, or into ' +
+      'downloading and opening harmful software?',
   },
   category: {
     type: 'choice',
@@ -78,6 +84,7 @@ export function toReview(body) {
     decision,
     confidence: Math.round(Math.abs(p - 0.5) * 2 * 1000) / 1000,
     category,
+    probability: p,
     model: typeof body.model === 'string' ? body.model : undefined,
   };
 }

@@ -19,6 +19,11 @@ const PHONE_RE = /(?:\+?\d[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b/g;
 const DIGITS_RE = /\d{5,}/g;
 // Long runs of letters+digits look like tokens, session ids, reset codes.
 const TOKEN_RE = /\b(?=[A-Za-z0-9_-]*\d)[A-Za-z0-9_-]{16,}\b/g;
+// File types that say "this is a program or a container for one". Kept even
+// when the rest of a path segment is redacted or the path is cut short: the
+// type is the strongest signal in a download link and identifies no one.
+const FILE_TYPE_RE = /\.(exe|msi|msix|msixbundle|appx|scr|bat|cmd|ps1|vbs|vbe|js|jse|wsf|hta|lnk|dll|jar|apk|dmg|pkg|deb|rpm|sh|py|bin|elf|zip|rar|7z|gz|tgz|xz|tar|iso|img|vhd|docm|xlsm|pptm|one)$/i;
+const fileType = (s) => s.match(FILE_TYPE_RE)?.[0] || '';
 
 /** Redact personal data and identifiers from free text. */
 export function redactText(text, max) {
@@ -41,14 +46,16 @@ export function redactPath(pathname) {
     try {
       s = decodeURIComponent(seg);
     } catch {
-      return '[id]';
+      return `[id]${fileType(seg)}`;
     }
-    if (s.includes('%')) return '[id]';
+    if (s.includes('%')) return `[id]${fileType(s)}`;
     if (IS_EMAIL.test(s)) return '[email]';
     return s.replace(TOKEN_RE, '[id]').replace(PHONE_RE, '[phone]').replace(DIGITS_RE, '[number]');
   });
   const path = segments.join('/');
-  return path.length > LIMITS.path ? `${path.slice(0, LIMITS.path)}…` : path;
+  if (path.length <= LIMITS.path) return path;
+  const type = fileType(segments.at(-1));
+  return `${path.slice(0, LIMITS.path - type.length)}…${type}`;
 }
 
 /**
