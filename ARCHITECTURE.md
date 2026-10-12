@@ -5,9 +5,10 @@ phishing and scam pages. It layers cheap, deterministic checks with a fast
 decision model (TypeSafe's **Jev**) used only where the cheap checks are unsure.
 
 > Status: roadmap phase 1 (local-only MVP: Tiers 0–2, input guard, warnings) is
-> implemented in `extension/`; see README.md. The backend and Jev (Tier 3) are not
-> built yet. Jev API details below are illustrative; confirm request/response
-> shapes against TypeSafe's docs before building the client.
+> implemented in `extension/`; see README.md. Tier 3 runs through the review
+> service in `server/`, whose Jev adapter (`server/models/jev.mjs`) follows
+> TypeSafe's API reference (https://docs.typesafe.ai/api). The request and
+> response sketches below are the original design, not the wire format.
 
 ---
 

@@ -5,8 +5,8 @@ they type a password, card number or gift-card code into a scam website.
 
 > **Status: proof of concept.** Local checks run on the device. Sites the
 > local checks can't decide ("needs review") can be sent, sanitized, to a
-> review service (`server/`) that will ask TypeSafe's Jev; the Jev call itself
-> is not implemented yet, so for now those sites stay held for review.
+> review service (`server/`) that asks TypeSafe's Jev. Without a
+> `TYPESAFE_API_KEY` the service can't answer, so those sites stay held for review.
 
 ## What it does
 
@@ -168,8 +168,13 @@ switch live in `chrome.storage.local` (`reviewEndpoint`, `reviewTimeoutMs`,
   an error or an invalid response leaves the destination held for review.
 - Reviews are cached for 30 minutes and identical requests in flight share one
   call. Reviews never change `allow`, `block` or policy decisions.
-- `server/models/jev.mjs` is the Jev adapter. **It is not implemented yet**: it
-  needs TypeSafe's API reference, and until then it refuses to run.
+- `server/models/jev.mjs` is the Jev adapter. It calls
+  `POST https://api.typesafe.ai/v1/systemone` ([API reference](https://docs.typesafe.ai/api))
+  with the sanitized request as the state and two questions: a Noul ("is this
+  destination trying to trick the user…?" → p) and a Choice (scam category, or
+  none). p ≥ 0.85 → block, p ≤ 0.15 → allow, otherwise needs_review; confidence
+  = 2·|p − 0.5|. The model is pinned to `jev-1.13.0`; `TYPESAFE_API_URL` and
+  `TYPESAFE_MODEL` override the endpoint and model.
 
 ### Tests
 

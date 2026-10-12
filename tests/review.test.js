@@ -1,6 +1,7 @@
 // Remote review plumbing: sanitization, the client (validation, timeout,
-// cache, de-duplication) and the review service. The models here are test
-// doubles standing in for Jev; they say nothing about Jev's real behaviour.
+// cache, de-duplication), the review service and the Jev adapter. The models
+// and Jev responses here are test doubles; they say nothing about Jev's real
+// judgements.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,7 +10,7 @@ import { buildReviewRequest, redactPath, redactText, reviewKey } from '../extens
 import { applyReview, createReviewer, validateReview } from '../extension/lib/reviewClient.js';
 import { decideUrl } from '../extension/lib/fusion.js';
 import { cleanRequest, createReviewServer } from '../server/server.mjs';
-import { createJevModel } from '../server/models/jev.mjs';
+import { buildJevRequest, createJevModel, DEFAULT_ENDPOINT, QUESTIONS, toReview } from '../server/models/jev.mjs';
 
 const REVIEW_URL = 'https://paypal-account-verify.top/signin/reset/9f8a7b6c5d4e3f2a1b0c?email=jane.doe@example.com&token=abc#frag';
 
@@ -45,6 +46,14 @@ test('page summaries are redacted and capped, typed values never included', () =
   assert.ok(req.page.text.length <= 1501);
   assert.deepEqual(req.page.formTargets, ['collector.example']);
   assert.notEqual(reviewKey(req), reviewKey(buildReviewRequest(url, decideUrl(url))));
+});
+
+test('percent-encoded identifiers in paths are redacted after decoding', () => {
+  assert.equal(redactPath('/u/jane.doe%40example.com/x'), '/u/[email]/x');
+  assert.equal(redactPath('/call/%2B1%20888%20555%200199'), '/call/[phone]');
+  assert.equal(redactPath('/acct/12%33%345'), '/acct/[number]');
+  assert.equal(redactPath('/a/%2540example.com'), '/a/[id]', 'double-encoded');
+  assert.equal(redactPath('/a%ZZ/b'), '/[id]/b', 'malformed');
 });
 
 test('redaction keeps ordinary words', () => {
@@ -167,11 +176,82 @@ test('service: valid model output is returned; bad output, errors and slowness a
   }, { modelTimeoutMs: 50 });
 });
 
-test('service: the Jev adapter refuses to run until it is implemented', async () => {
-  await withServer(createJevModel({ apiKey: undefined }), async (url) => {
+test('service: the Jev adapter refuses to run without a key', async () => {
+  await withServer(createJevModel({ apiKey: '' }), async (url) => {
     const res = await post(url, request);
     assert.equal(res.status, 503);
     assert.match((await res.json()).detail, /TYPESAFE_API_KEY/);
+  });
+});
+
+// --- Jev adapter -------------------------------------------------------------
+
+const jevAnswer = (noul, choice = 'none') => ({
+  model: 'jev-1.13.0',
+  answers: {
+    phish: { type: 'noul', noul },
+    category: { type: 'choice', choice, probabilities: { [choice]: 0.9 }, confidence: 0.9 },
+  },
+  usage: { input_tokens: 900, output_tokens: 60 },
+});
+
+test('Jev request: the sanitized request is the state, with a Noul and a Choice question', () => {
+  const body = buildJevRequest(request);
+  assert.equal(body.model, 'jev-1.13.0');
+  assert.equal(body.state, request);
+  assert.equal(QUESTIONS.phish.type, 'noul');
+  assert.equal(QUESTIONS.category.type, 'choice');
+  assert.ok('none' in QUESTIONS.category.criteria);
+});
+
+test('Jev answers map to reviews the client accepts', () => {
+  assert.deepEqual(toReview(jevAnswer(0.98, 'credential_phish')),
+    { decision: 'block', confidence: 0.96, category: 'credential_phish', model: 'jev-1.13.0' });
+  assert.deepEqual(toReview(jevAnswer(0.03, 'credential_phish')),
+    { decision: 'allow', confidence: 0.94, category: null, model: 'jev-1.13.0' });
+  assert.equal(toReview(jevAnswer(0.5)).decision, 'needs_review');
+  assert.equal(toReview(jevAnswer(0.9, 'none')).category, null);
+  for (const p of [0, 0.1, 0.15, 0.5, 0.85, 0.9, 1]) {
+    for (const choice of Object.keys(QUESTIONS.category.criteria)) {
+      assert.ok(validateReview(toReview(jevAnswer(p, choice))), `p=${p} ${choice}`);
+    }
+  }
+  assert.throws(() => toReview({ answers: {} }));
+  assert.throws(() => toReview({ answers: { phish: { noul: 1.5 } } }));
+});
+
+test('Jev adapter sends the key as a bearer token to TypeSafe and reports HTTP errors', async () => {
+  let seen;
+  const model = createJevModel({
+    apiKey: 'test-key',
+    endpoint: DEFAULT_ENDPOINT,
+    fetch: async (url, init) => {
+      seen = { url, init };
+      return new Response(JSON.stringify(jevAnswer(0.99, 'tech_support_scam')), { status: 200 });
+    },
+  });
+  assert.equal(model.configured, true);
+  const review = await model.classify(request);
+  assert.equal(seen.url, 'https://api.typesafe.ai/v1/systemone');
+  assert.equal(seen.init.headers.authorization, 'Bearer test-key');
+  assert.deepEqual(JSON.parse(seen.init.body).state, request);
+  assert.equal(review.decision, 'block');
+  assert.equal(review.category, 'tech_support_scam');
+
+  const failing = createJevModel({ apiKey: 'k', fetch: async () => new Response('bad key', { status: 401 }) });
+  await assert.rejects(failing.classify(request), /401/);
+});
+
+test('service: Jev reviews pass through the service end to end', async () => {
+  const model = createJevModel({
+    apiKey: 'k',
+    fetch: async () => new Response(JSON.stringify(jevAnswer(0.97, 'credential_phish')), { status: 200 }),
+  });
+  await withServer(model, async (url) => {
+    const res = await post(url, request);
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(),
+      { decision: 'block', confidence: 0.94, category: 'credential_phish', model: 'jev-1.13.0' });
   });
 });
 
