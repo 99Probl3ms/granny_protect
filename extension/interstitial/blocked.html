@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dangerous website blocked</title>
+  <link rel="stylesheet" href="../ui/common.css">
+  <style>
+    body { background: #7f1d1d; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .icon { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+    .address { font-size: 16px; color: var(--muted); word-break: break-all; margin-bottom: 20px; }
+    .confirm { margin-top: 20px; padding: 16px; border-radius: 12px; background: #fff3e0; }
+    .confirm p { font-size: 18px; }
+    .confirm .btn-secondary { margin: 4px 8px 4px 0; }
+    @media (prefers-color-scheme: dark) { .confirm { background: #3e2a12; } }
+  </style>
+</head>
+<body>
+  <main class="card" role="alertdialog" aria-labelledby="headline">
+    <div class="icon" aria-hidden="true">&#x26D4;</div>
+    <h1 id="headline">This website looks dangerous.</h1>
+    <p id="advice">Don't type any personal information here.</p>
+    <ul id="reasons" class="reasons"></ul>
+    <p class="address">Blocked address: <span id="address"></span></p>
+    <button id="safe" class="btn-safe" type="button">Take me to safety</button>
+    <button id="continue" class="btn-quiet" type="button">I understand the risk</button>
+    <div id="confirm" class="confirm" hidden>
+      <p>Are you sure? Only continue if someone you trust has told you this website is safe.</p>
+      <button id="yes" class="btn-secondary" type="button">Yes, continue to the site</button>
+      <button id="no" class="btn-secondary" type="button">No, take me to safety</button>
+    </div>
+  </main>
+  <script src="blocked.js" type="module"></script>
+</body>
+</html>

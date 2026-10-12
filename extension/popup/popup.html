@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Granny Protect</title>
+  <link rel="stylesheet" href="../ui/common.css">
+  <style>
+    body { width: 380px; padding: 20px; font-size: 18px; }
+    .status { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+    .status .icon { font-size: 40px; line-height: 1; }
+    .status h1 { font-size: 22px; margin: 0 0 4px; }
+    .status p { margin: 0; font-size: 16px; color: var(--muted); }
+    .domain { font-weight: 700; word-break: break-all; }
+    .ok h1 { color: var(--ok); }
+    .warn h1 { color: var(--warn); }
+    .block h1 { color: var(--danger); }
+    .reasons { font-size: 15px; }
+    .trust { width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="status" class="status">
+    <div id="icon" class="icon" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
+    <div>
+      <h1 id="headline">Checking…</h1>
+      <p><span class="domain" id="domain"></span></p>
+    </div>
+  </div>
+  <p id="advice" hidden></p>
+  <ul id="reasons" class="reasons" hidden></ul>
+  <button id="trust" class="btn-secondary trust" type="button" hidden>I trust this website</button>
+  <button id="untrust" class="btn-secondary trust" type="button" hidden>Stop trusting this website</button>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
