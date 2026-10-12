@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { decideUrl } from '../extension/lib/fusion.js';
 import { buildBlocklist } from '../extension/lib/lists.js';
 import {
-  DOMAINS_PER_RULE, MAX_URL_RULES, allowRule, buildBlockRules, coveredByRules,
+  DOMAINS_PER_RULE, MAX_URL_RULES, allowRule, buildBlockRules, coveredByRules, supportedBlockRules,
 } from '../extension/lib/dnrRules.js';
 
 const BLOCK_PAGE = 'chrome-extension://abc/interstitial/blocked.html';
@@ -125,4 +125,44 @@ test('DNR and local decisions agree on trusted hosts, descendants, and exact pat
     assert.equal(coveredByRules(url, bl, userTrusted), blocked, `coverage: ${url}`);
     assert.equal(decideUrl(url, { blocklist: bl, userTrusted }).action === 'block', blocked, `local: ${url}`);
   }
+});
+
+test('compiler-rejected URL rules do not discard other blocks or suppress their fallback', async () => {
+  const badUrl = `https://docs.google.com/forms/${'a'.repeat(1200)}`;
+  const goodUrl = 'https://docs.google.com/forms/good';
+  const bl = buildBlocklist(['https://evil-login.xyz/', badUrl, goodUrl]);
+  const rules = buildBlockRules(bl, BLOCK_PAGE);
+  const checks = [];
+  const { addRules, skippedRuleIds } = await supportedBlockRules(rules, async (options) => {
+    checks.push(options);
+    return { isSupported: !options.regex.includes('a'.repeat(1200)), reason: 'memoryLimitExceeded' };
+  });
+  assert.deepEqual(addRules.map((r) => r.id), [1, 3]);
+  assert.deepEqual(skippedRuleIds, [2]);
+  assert.ok(checks.every((c) => c.requireCapturing), 'validate redirect capture support');
+  assert.equal(checks[1].isCaseSensitive, true);
+  assert.ok(coveredByRules('https://evil-login.xyz/path', bl, [], skippedRuleIds));
+  assert.ok(coveredByRules(goodUrl, bl, [], skippedRuleIds));
+  assert.equal(coveredByRules(badUrl, bl, [], skippedRuleIds), false, 'use navigation fallback');
+  assert.equal(decideUrl(badUrl, { blocklist: bl }).action, 'block', 'local block remains');
+});
+
+test('regex support is checked by Chrome rather than inferred from string length', async () => {
+  const bl = buildBlocklist(['https://docs.google.com/forms/short']);
+  const rules = buildBlockRules(bl, BLOCK_PAGE);
+  const { addRules, skippedRuleIds } = await supportedBlockRules(rules, async () => ({ isSupported: false }));
+  assert.deepEqual(addRules, []);
+  assert.equal(coveredByRules('https://docs.google.com/forms/short', bl, [], skippedRuleIds), false);
+});
+
+test('identical host regexes are validated once, and rejected host rules use fallback', async () => {
+  const bl = buildBlocklist(Array.from({ length: DOMAINS_PER_RULE + 1 }, (_, i) => `https://bad${i}.top/`));
+  const rules = buildBlockRules(bl, BLOCK_PAGE);
+  let checks = 0;
+  const { addRules, skippedRuleIds } = await supportedBlockRules(rules, async () => { checks++; return { isSupported: false }; });
+  assert.equal(checks, 1);
+  assert.deepEqual(addRules, []);
+  assert.deepEqual(skippedRuleIds, [1, 2]);
+  assert.equal(coveredByRules('https://bad0.top/', bl, [], skippedRuleIds), false);
+  assert.equal(coveredByRules(`https://bad${DOMAINS_PER_RULE}.top/`, bl, [], skippedRuleIds), false);
 });
