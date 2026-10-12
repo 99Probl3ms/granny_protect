@@ -2,6 +2,7 @@
 // short sentences, no jargon, tell them what to do.
 
 const HEADLINES = {
+  insecure_password: () => "This page isn't safe for passwords.",
   credential_phish: (brand) => brand
     ? `This page is pretending to be ${brand}.`
     : 'This page may be trying to steal your password.',
@@ -11,6 +12,8 @@ const HEADLINES = {
 };
 
 const ADVICE = {
+  insecure_password: () =>
+    "Your organization doesn't allow typing passwords into pages that aren't encrypted. The password boxes on this page are locked. If you need this site for work, contact IT.",
   credential_phish: (brand) => brand
     ? `Don't type your password or card number here. If you're worried about your ${brand} account, close this page and go to ${brand} the way you normally do.`
     : "Don't type your password, card number or any personal details here.",
@@ -44,11 +47,38 @@ const REASONS = {
   forced_fullscreen: 'It took over your whole screen.',
   risky_tld: 'The web address ending is often used by scam sites.',
   free_hosting: 'It\'s on a free website service that scammers often use.',
+  remote_review_block: 'Our safety check confirmed this website is very likely a scam.',
+  password_on_http_page: 'This page isn\'t encrypted (http), so a password typed here could be read by others.',
+  password_sent_over_http: 'This page would send your password without encryption (http).',
+  brand_in_path: (d) => `The link mentions ${d}, but it doesn't go to ${d}'s website.`,
+  brand_in_userinfo: (d) => `The web address starts with ${d}'s name to hide where it really goes.`,
+  suspicious_words_in_domain: 'The web address uses words like "login" or "verify" to look official.',
+};
+
+// For destinations we couldn't confirm either way ("needs_review"). Softer:
+// there are warning signs, not proof.
+const REVIEW_HEADLINES = {
+  credential_phish: (brand) => brand
+    ? `This website might be pretending to be ${brand}.`
+    : "We couldn't confirm this website is safe.",
+  tech_support_scam: () => 'This page may be a fake computer warning.',
+  payment_scam: () => 'This page may be a scam asking for money.',
+  suspicious_site: () => "We couldn't confirm this website is safe.",
+};
+
+const REVIEW_ADVICE = {
+  credential_phish: (brand) => brand
+    ? `If you meant to visit ${brand}, it's safer to go there the way you normally do. Don't type your password here unless you're sure.`
+    : "If you weren't expecting this website, go back. Don't type passwords or card numbers here unless you're sure.",
+  tech_support_scam: ADVICE.tech_support_scam,
+  payment_scam: ADVICE.payment_scam,
+  suspicious_site: () => "It has some warning signs. If you weren't expecting to visit it, go back.",
 };
 
 /** Build user-facing text from a verdict. */
 export function describe(verdict) {
   const cat = verdict.category || 'suspicious_site';
+  const review = verdict.action === 'needs_review';
   const reasons = [];
   for (const r of verdict.reasons || []) {
     const t = REASONS[r.code];
@@ -58,8 +88,8 @@ export function describe(verdict) {
     if (reasons.length >= 3) break;
   }
   return {
-    headline: HEADLINES[cat](verdict.brand),
-    advice: ADVICE[cat](verdict.brand),
+    headline: (review ? REVIEW_HEADLINES : HEADLINES)[cat](verdict.brand),
+    advice: (review ? REVIEW_ADVICE : ADVICE)[cat](verdict.brand),
     reasons,
   };
 }

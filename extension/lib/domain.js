@@ -26,6 +26,38 @@ export function isIpHost(host) {
   return false;
 }
 
+// Hostnames that only resolve inside a home or office network.
+const INTERNAL_SUFFIXES = ['localhost', 'local', 'lan', 'internal', 'intranet', 'corp', 'home', 'home.arpa', 'localdomain'];
+
+function isPrivateIPv4(host) {
+  const m = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!m) return false;
+  const [a, b] = [Number(m[1]), Number(m[2])];
+  return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) || (a === 169 && b === 254) || (a === 100 && b >= 64 && b <= 127);
+}
+
+function isPrivateIPv6(host) {
+  const h = host.replace(/^\[|\]$/g, '');
+  if (!h.includes(':')) return false;
+  return h === '::1' || /^f[cd][0-9a-f]{2}:/.test(h) || /^fe[89ab][0-9a-f]:/.test(h);
+}
+
+/**
+ * Destinations on the user's own network: localhost, private IP ranges,
+ * single-label names ("http://intranet/") and internal-only suffixes.
+ * Numeric IPs written in other forms (integer, hex) are not treated as
+ * internal, since that's an obfuscation trick.
+ */
+export function isInternalHost(host) {
+  host = String(host || '').toLowerCase().replace(/\.$/, '');
+  if (!host) return false;
+  if (isPrivateIPv4(host) || isPrivateIPv6(host)) return true;
+  if (isIpHost(host)) return false;
+  if (!host.includes('.')) return true;
+  return INTERNAL_SUFFIXES.some((s) => host === s || host.endsWith('.' + s));
+}
+
 /** Registrable domain, e.g. "login.paypal.co.uk" -> "paypal.co.uk". */
 export function registrableDomain(host) {
   host = normalizeHost(host);

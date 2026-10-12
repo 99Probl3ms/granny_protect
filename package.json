@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test --test-reporter=spec tests/*.test.js",
-    "test:e2e": "node e2e/smoke.mjs"
+    "test:policy": "node --test e2e/password-policy.mjs",
+    "test:e2e": "node e2e/smoke.mjs && node e2e/navigation.mjs && node e2e/review.mjs && npm run test:policy",
+    "eval": "node scripts/eval.mjs",
+    "review-server": "node server/server.mjs"
   }
 }

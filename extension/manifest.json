@@ -4,17 +4,41 @@
   "version": "0.1.0",
   "description": "Warns you before you type your password or card number into a scam website.",
   "minimum_chrome_version": "116",
-  "permissions": ["storage", "webNavigation", "tabs", "alarms"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "storage",
+    "webNavigation",
+    "webRequest",
+    "tabs",
+    "alarms",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["content/content.js"],
-      "run_at": "document_idle"
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "interstitial/blocked.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "action": {

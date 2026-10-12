@@ -121,7 +121,7 @@ export function analyzePage(f, opts = {}) {
   if (fields.otp) add('one_time_code_field', 0.1);
 
   if (u.protocol === 'http:' && asksSecrets && !['localhost', '127.0.0.1'].includes(host)) {
-    add('secrets_over_http', 0.45);
+    add('secrets_over_http', 0.35);
   }
   if (asksSecrets && isUserContentHost(host)) add('secrets_on_free_hosting', 0.35);
 
