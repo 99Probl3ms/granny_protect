@@ -186,10 +186,11 @@
 
     const forms = [];
     for (const form of document.forms) {
-      const hasPassword = !!form.querySelector('input[type=password]');
+      const hasPassword = [...form.elements].some((el) => sensitiveKind(el) === 'password');
       if (!hasPassword) continue;
-      const action = formAction(form);
-      forms.push({ actionHost: action?.hostname || location.hostname, actionProtocol: action?.protocol || location.protocol, hasPassword });
+      for (const action of formActions(form)) {
+        forms.push({ actionHost: action?.hostname || location.hostname, actionProtocol: action?.protocol || location.protocol, hasPassword });
+      }
     }
 
     const meta = (sel) => document.querySelector(sel)?.getAttribute('content') || '';
@@ -238,23 +239,33 @@
   // -------------------------------------------------------------------------
   // Input guard: while locked, sensitive fields can't be focused or typed in.
 
-  function formAction(form) {
+  function formAction(form, submitter) {
     try {
-      return new URL(form.getAttribute('action') || location.href, location.href);
+      const action = submitter?.hasAttribute('formaction')
+        ? submitter.formAction : form.getAttribute('action') || location.href;
+      return new URL(action, document.baseURI);
     } catch {
       return null;
     }
   }
 
-  // Enterprise policy, enforced here too so it doesn't wait on the
-  // background: no password into an http page or an http form target.
-  function violatesPasswordPolicy(el) {
-    if (sensitiveKind(el) !== 'password') return false;
-    return location.protocol === 'http:' || (el.form && formAction(el.form)?.protocol === 'http:');
+  function formActions(form) {
+    const submitters = [...document.querySelectorAll('button[formaction], input[formaction]')]
+      .filter((el) => el.form === form && ['submit', 'image'].includes(el.type));
+    return [formAction(form), ...submitters.map((el) => formAction(form, el))];
   }
 
-  function blocked(el) {
-    if (violatesPasswordPolicy(el)) {
+  // Enterprise policy, enforced here too so it doesn't wait on the
+  // background: no password into an http page or an http form target.
+  function violatesPasswordPolicy(el, submitter) {
+    if (sensitiveKind(el) !== 'password') return false;
+    return location.protocol === 'http:' || (el.form &&
+      (formAction(el.form, submitter)?.protocol === 'http:' ||
+        formActions(el.form).some((action) => action?.protocol === 'http:')));
+  }
+
+  function blocked(el, submitter) {
+    if (violatesPasswordPolicy(el, submitter)) {
       // Make sure the verdict (and its overlay text) reflects the policy.
       if (!state.verdict?.policy) analyze();
       state.locked = true;
@@ -279,7 +290,7 @@
   function onSubmit(e) {
     const form = e.target;
     if (!(form instanceof HTMLFormElement)) return;
-    if ([...form.elements].some((el) => blocked(el))) {
+    if ([...form.elements].some((el) => blocked(el, e.submitter))) {
       e.preventDefault();
       e.stopImmediatePropagation();
       showOverlay();

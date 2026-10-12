@@ -44,7 +44,7 @@ test('page summaries are redacted and capped, typed values never included', () =
   for (const leak of ['555-0199', 'help@scam.example', '123456789', 'hunter2']) assert.ok(!json.includes(leak), leak);
   assert.ok(req.page.text.length <= 1501);
   assert.deepEqual(req.page.formTargets, ['collector.example']);
-  assert.ok(reviewKey(req).startsWith('page:'));
+  assert.notEqual(reviewKey(req), reviewKey(buildReviewRequest(url, decideUrl(url))));
 });
 
 test('redaction keeps ordinary words', () => {
@@ -172,5 +172,57 @@ test('service: the Jev adapter refuses to run until it is implemented', async ()
     const res = await post(url, request);
     assert.equal(res.status, 503);
     assert.match((await res.json()).detail, /TYPESAFE_API_KEY/);
+  });
+});
+
+
+test('changed page evidence and local signals require a fresh review', async () => {
+  const f = fakeFetch(async () => json(200, { decision: 'allow', confidence: 0.95 }));
+  const r = createReviewer({ endpoint: 'http://review.test/review', fetch: f });
+  const page = { title: 'Discussion', text: 'Community news', fields: { password: 0 } };
+  const local = decideUrl(REVIEW_URL);
+  await r.review(buildReviewRequest(REVIEW_URL, local, page));
+  await r.review(buildReviewRequest(REVIEW_URL, local, { ...page, fields: { password: 1 } }));
+  await r.review(buildReviewRequest(REVIEW_URL, local, { ...page, text: 'Tell our operator your account passphrase' }));
+  await r.review(buildReviewRequest(REVIEW_URL, { ...local, risk: 0.8 }, page));
+  assert.equal(f.calls.length, 4);
+  const hit = await r.review(buildReviewRequest(REVIEW_URL, local, page));
+  assert.equal(hit.cached, true, 'identical evidence still reuses the review');
+});
+
+test('different private destination identities do not share redacted cache entries', async () => {
+  const f = fakeFetch(async () => json(200, { decision: 'allow', confidence: 0.95 }));
+  const r = createReviewer({ endpoint: 'http://review.test/review', fetch: f });
+  const urls = [
+    'https://paypal-account-verify.top/reset/123456?token=one#first',
+    'https://paypal-account-verify.top/reset/654321?token=one#first',
+    'https://paypal-account-verify.top/reset/123456?token=two#first',
+    'https://paypal-account-verify.top/reset/123456?token=one#second',
+    'https://paypal-account-verify.top:8443/reset/123456?token=one#first',
+  ];
+  const local = decideUrl(urls[0]);
+  for (const url of urls) await r.review(buildReviewRequest(url, local));
+  assert.equal(f.calls.length, urls.length);
+  assert.ok(f.calls.every((req) => JSON.stringify(req) === JSON.stringify(f.calls[0])), 'private identity stays out of the network payload');
+});
+
+test('malformed review fields return 400 and leave the server usable', async () => {
+  const malformed = [
+    { destination: { scheme: 'https', host: { toString: null } } },
+    { ...request, destination: { ...request.destination, path: { toString: null } } },
+    { ...request, local: { signals: [{ toString: null }] } },
+    { ...request, page: { title: { toString: null } } },
+    { ...request, page: { identity: [{ toString: null }] } },
+    { ...request, page: { fields: { password: {} } } },
+    { ...request, page: [] },
+    { ...request, local: [] },
+    { ...request, page: { formTargets: [{}] } },
+    null,
+  ];
+  await withServer({ name: 'stand-in', classify: async () => ({ decision: 'allow', confidence: 0.9 }) }, async (url) => {
+    for (const body of malformed) {
+      assert.equal((await post(url, body)).status, 400, JSON.stringify(body));
+      assert.equal((await post(url, request)).status, 200, 'valid requests still work after rejection');
+    }
   });
 });

@@ -24,9 +24,25 @@ const HOST_RE = /^[a-z0-9.-]{1,253}$/;
  * clean request or null.
  */
 export function cleanRequest(body) {
-  const d = body?.destination;
-  if (!d || !['http', 'https'].includes(d.scheme) || !HOST_RE.test(String(d.host))) return null;
+  const record = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  const optionalStrings = (v, keys) => keys.every((key) => v[key] === undefined || typeof v[key] === 'string');
+  const strings = (v) => v === undefined || (Array.isArray(v) && v.every((item) => typeof item === 'string'));
+  if (!record(body) || !record(body.destination)) return null;
+  const d = body.destination;
+  if (!['http', 'https'].includes(d.scheme) || typeof d.host !== 'string' || !HOST_RE.test(d.host) ||
+      !optionalStrings(d, ['hostUnicode', 'registrableDomain', 'path'])) return null;
+  if (body.local !== undefined && !record(body.local)) return null;
   const local = body.local || {};
+  if (!optionalStrings(local, ['decision']) || !strings(local.signals) ||
+      (local.brand != null && typeof local.brand !== 'string') ||
+      (local.risk !== undefined && (typeof local.risk !== 'number' || !Number.isFinite(local.risk)))) return null;
+  if (body.page !== undefined) {
+    const p = body.page;
+    if (!record(p) || !optionalStrings(p, ['title', 'siteName', 'text']) ||
+        !strings(p.identity) || !strings(p.formTargets)) return null;
+    if (p.fields !== undefined && (!record(p.fields) ||
+        Object.values(p.fields).some((v) => typeof v !== 'number' || !Number.isFinite(v) || v < 0))) return null;
+  }
   const clean = {
     destination: {
       scheme: d.scheme,
@@ -78,13 +94,18 @@ export function createReviewServer({ model, modelTimeoutMs = 1200 }) {
 
     let size = 0;
     const chunks = [];
-    for await (const chunk of req) {
-      size += chunk.length;
-      if (size > MAX_BODY) {
-        send(res, 413, { error: 'too_large' });
-        return;
+    try {
+      for await (const chunk of req) {
+        size += chunk.length;
+        if (size > MAX_BODY) {
+          send(res, 413, { error: 'too_large' });
+          return;
+        }
+        chunks.push(chunk);
       }
-      chunks.push(chunk);
+    } catch {
+      if (!res.destroyed) send(res, 400, { error: 'invalid_request' });
+      return;
     }
     let body;
     try {
@@ -93,7 +114,13 @@ export function createReviewServer({ model, modelTimeoutMs = 1200 }) {
       send(res, 400, { error: 'invalid_json' });
       return;
     }
-    const request = cleanRequest(body);
+    let request;
+    try {
+      request = cleanRequest(body);
+    } catch {
+      send(res, 400, { error: 'invalid_request' });
+      return;
+    }
     if (!request) {
       send(res, 400, { error: 'invalid_request' });
       return;

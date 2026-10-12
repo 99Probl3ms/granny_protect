@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { decideUrl } from '../extension/lib/fusion.js';
 import { buildBlocklist } from '../extension/lib/lists.js';
 import {
   DOMAINS_PER_RULE, MAX_URL_RULES, allowRule, buildBlockRules, coveredByRules,
@@ -10,12 +11,14 @@ const BLOCK_PAGE = 'chrome-extension://abc/interstitial/blocked.html';
 
 /** Would this rule redirect `url`? (requestDomains matches subdomains too.) */
 function ruleMatches(rule, url) {
-  const { regexFilter, requestDomains } = rule.condition;
+  const { regexFilter, requestDomains, excludedRequestDomains, isUrlFilterCaseSensitive } = rule.condition;
+  const host = new URL(url).hostname;
+  if (excludedRequestDomains?.some((d) => host === d || host.endsWith('.' + d))) return false;
   if (requestDomains) {
     const host = new URL(url).hostname;
     if (!requestDomains.some((d) => host === d || host.endsWith('.' + d))) return false;
   }
-  return new RegExp(regexFilter, 'i').test(url);
+  return new RegExp(regexFilter, isUrlFilterCaseSensitive ? '' : 'i').test(url);
 }
 
 const anyRuleMatches = (rules, url) => rules.some((r) => ruleMatches(r, url));
@@ -95,4 +98,31 @@ test('allow rules outrank block rules', () => {
   const rule = allowRule(3, 'evil.top');
   assert.equal(rule.action.type, 'allow');
   assert.ok(rule.priority > buildBlockRules(buildBlocklist(['https://evil.top/']), BLOCK_PAGE)[0].priority);
+});
+
+
+test('DNR and local decisions agree on trusted hosts, descendants, and exact paths', () => {
+  const feed = [
+    'https://www.paypal.com/example', 'http://intranet/login',
+    'https://bad.example-company.net/a', 'https://example-vendor.net/a',
+    'https://docs.google.com/forms/AbC',
+  ];
+  const userTrusted = ['safe.example-vendor.net', 'docs.google.com'];
+  const bl = buildBlocklist(feed);
+  const rules = buildBlockRules(bl, BLOCK_PAGE, userTrusted);
+  const cases = [
+    ['https://www.paypal.com/example', false],
+    ['http://intranet/login', false],
+    ['https://child.bad.example-company.net/', true],
+    ['https://safe.example-vendor.net/a', false],
+    ['https://child.safe.example-vendor.net/a', false],
+    ['https://other.example-vendor.net/a', true],
+    ['https://docs.google.com/forms/AbC', true],
+    ['https://docs.google.com/forms/abc', false],
+  ];
+  for (const [url, blocked] of cases) {
+    assert.equal(anyRuleMatches(rules, url), blocked, `DNR: ${url}`);
+    assert.equal(coveredByRules(url, bl, userTrusted), blocked, `coverage: ${url}`);
+    assert.equal(decideUrl(url, { blocklist: bl, userTrusted }).action === 'block', blocked, `local: ${url}`);
+  }
 });

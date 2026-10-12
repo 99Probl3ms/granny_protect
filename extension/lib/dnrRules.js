@@ -10,7 +10,8 @@
 // Every rule is a regex rule so the original URL can be passed to the block
 // page in its fragment: blocked.html#https://bad.example/path?x=1
 
-import { hostMatches, normalizeHost } from './domain.js';
+import { isInternalHost, normalizeHost } from './domain.js';
+import { BUILTIN_TRUSTED, isTrusted } from './lists.js';
 
 export const BLOCK_RULE_PRIORITY = 1;
 export const ALLOW_RULE_PRIORITY = 2;
@@ -33,7 +34,7 @@ function inHostSet(host, set) {
 
 /** Hosts and exact URLs from the blocklist, minus anything the user trusts. */
 function entries(blocklist, userTrusted) {
-  const trusted = (host) => userTrusted.some((d) => hostMatches(host, d));
+  const trusted = (host) => isInternalHost(host) || isTrusted(host, userTrusted);
   const hosts = [...blocklist.hosts].filter((h) => HOST_RE.test(h) && !trusted(h));
   const hostSet = new Set(hosts);
   const coveredByHost = (host) => inHostSet(host, hostSet);
@@ -55,6 +56,8 @@ function entries(blocklist, userTrusted) {
  */
 export function buildBlockRules(blocklist, blockPageUrl, userTrusted = []) {
   const { hosts, urls } = entries(blocklist, userTrusted);
+  const excludedRequestDomains = [...new Set([...BUILTIN_TRUSTED, ...userTrusted]
+    .map(normalizeHost).filter((host) => HOST_RE.test(host) && isTrusted(host, userTrusted)))];
   const redirect = {
     type: 'redirect',
     redirect: { regexSubstitution: `${blockPageUrl}#\\0` },
@@ -70,6 +73,7 @@ export function buildBlockRules(blocklist, blockPageUrl, userTrusted = []) {
       condition: {
         regexFilter: '^https?://.*',
         requestDomains: hosts.slice(i, i + DOMAINS_PER_RULE),
+        excludedRequestDomains,
         resourceTypes: ['main_frame'],
       },
     });
@@ -84,6 +88,7 @@ export function buildBlockRules(blocklist, blockPageUrl, userTrusted = []) {
       priority: BLOCK_RULE_PRIORITY,
       action: redirect,
       condition: {
+        isUrlFilterCaseSensitive: true,
         regexFilter: `^https?://(www\\.)?${escapeRegex(host)}(:[0-9]+)?${escapeRegex(path)}/*([?#].*)?$`,
         resourceTypes: ['main_frame'],
       },
@@ -105,6 +110,7 @@ export function coveredByRules(url, blocklist, userTrusted = []) {
   }
   const { hostSet, urls } = entries(blocklist, userTrusted);
   const host = normalizeHost(u.hostname);
+  if (isInternalHost(host) || isTrusted(host, userTrusted)) return false;
   if (inHostSet(host, hostSet)) return true;
   const norm = `${host}${u.pathname.replace(/\/+$/, '')}`;
   return urls.includes(norm);

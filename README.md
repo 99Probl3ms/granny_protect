@@ -177,6 +177,7 @@ Node 20 or later.
 
 ```sh
 npm test            # unit tests, including every entry in the destination test set
+npm run test:policy # DOM-level password-policy regression tests (Playwright)
 npm run eval        # confusion matrix for the destination test set
 npm run test:e2e    # loads the extension in Chromium: smoke test, navigation matrix, review flows
 ```
@@ -191,6 +192,10 @@ installed in this project, point to an existing install:
 ```sh
 PLAYWRIGHT_PATH=/path/to/node_modules/playwright/index.mjs npm run test:e2e
 ```
+
+The DOM-level policy tests can also use an installed browser via
+`CHROMIUM_EXECUTABLE_PATH=/path/to/chromium npm run test:policy`. They mock the
+extension message bridge and do not replace the unpacked-extension tests.
 
 It serves local test pages under fake hostnames (such as
 `paypal-account-verify.top`), so it needs no network access. The navigation

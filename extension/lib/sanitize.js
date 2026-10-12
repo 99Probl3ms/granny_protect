@@ -8,6 +8,9 @@
 
 import { registrableDomain, toUnicodeHost, normalizeHost } from './domain.js';
 
+// Full destination identity stays on-device and is never serialized for review.
+const destinations = new WeakMap();
+
 export const LIMITS = { path: 120, title: 200, text: 1500, identity: 5 };
 
 const EMAIL_RE = /[^\s@/]+@[^\s@/]+\.[a-z]{2,}/gi;
@@ -76,11 +79,11 @@ export function buildReviewRequest(url, verdict, page) {
       formTargets: [...new Set((page.forms || []).map((f) => normalizeHost(f.actionHost)).filter(Boolean))],
     };
   }
+  destinations.set(request, u.href);
   return request;
 }
 
-/** Cache key: what the request is about, never the raw URL. */
+/** Cache only identical evidence and destinations. The key never leaves the device. */
 export function reviewKey(request) {
-  const d = request.destination;
-  return `${request.page ? 'page' : 'url'}:${d.scheme}://${d.host}${d.path}`;
+  return JSON.stringify([destinations.get(request) ?? null, request]);
 }
