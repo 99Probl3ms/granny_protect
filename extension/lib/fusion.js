@@ -1,21 +1,26 @@
-// Combine tiers into a verdict. Hard rules (trusted / blocklisted) always win;
-// heuristic scores are combined with noisy-OR and compared to thresholds.
+// Combine tiers into one of three decisions:
+//   allow         go ahead
+//   needs_review  uncertain: hold the navigation / page until reviewed
+//                 (by the user now; by Jev in phase 2)
+//   block         known or near-certain scam
+// Hard rules (internal, trusted, blocklisted) always win; heuristic scores are
+// combined with noisy-OR and compared to thresholds.
 
-import { normalizeHost, registrableDomain } from './domain.js';
+import { isInternalHost, normalizeHost, registrableDomain } from './domain.js';
 import { isBlocklisted, isTrusted } from './lists.js';
 import { analyzePage } from './pageHeuristics.js';
 import { noisyOr } from './score.js';
 import { analyzeUrl } from './urlHeuristics.js';
 
-export const THRESHOLDS = { block: 0.85, warn: 0.6 };
+export const THRESHOLDS = { block: 0.85, review: 0.5 };
 
-export const VERDICT = { ALLOW: 'allow', WARN: 'warn', BLOCK: 'block' };
+export const VERDICT = { ALLOW: 'allow', REVIEW: 'needs_review', BLOCK: 'block' };
 
 /**
  * @typedef {Object} Verdict
- * @property {'allow'|'warn'|'block'} action
+ * @property {'allow'|'needs_review'|'block'} action
  * @property {number} risk
- * @property {'trusted'|'blocklist'|'heuristics'} source
+ * @property {'internal'|'trusted'|'blocklist'|'heuristics'} source
  * @property {'credential_phish'|'tech_support_scam'|'payment_scam'|'suspicious_site'|null} category
  * @property {string|undefined} brand     brand being impersonated, if any
  * @property {{code:string, weight:number, detail?:string}[]} reasons
@@ -25,7 +30,7 @@ export const VERDICT = { ALLOW: 'allow', WARN: 'warn', BLOCK: 'block' };
 /**
  * @param {Object} input
  * @param {string} input.url
- * @param {import('./pageHeuristics.js').PageFeatures} [input.page]  omitted before the page loads
+ * @param {import('./pageHeuristics.js').PageFeatures} [input.page]  omitted for URL-only decisions
  * @param {string[]} [input.userTrusted]
  * @param {{urls:Set<string>, hosts:Set<string>}} [input.blocklist]
  * @returns {Verdict}
@@ -33,18 +38,18 @@ export const VERDICT = { ALLOW: 'allow', WARN: 'warn', BLOCK: 'block' };
 export function decide({ url, page, userTrusted = [], blocklist }) {
   let host = '';
   try {
-    host = normalizeHost(new URL(url).hostname);
+    const u = new URL(url);
+    if (u.protocol === 'http:' || u.protocol === 'https:') host = normalizeHost(u.hostname);
   } catch {
     /* not a URL we judge */
   }
   const domain = registrableDomain(host);
   const base = { domain, brand: undefined, category: null };
+  const allow = (source) => ({ ...base, action: VERDICT.ALLOW, risk: 0, source, reasons: [] });
 
-  if (!host) return { ...base, action: VERDICT.ALLOW, risk: 0, source: 'heuristics', reasons: [] };
-
-  if (isTrusted(host, userTrusted)) {
-    return { ...base, action: VERDICT.ALLOW, risk: 0, source: 'trusted', reasons: [] };
-  }
+  if (!host) return allow('heuristics');
+  if (isInternalHost(host)) return allow('internal');
+  if (isTrusted(host, userTrusted)) return allow('trusted');
   if (isBlocklisted(url, blocklist)) {
     return {
       ...base, action: VERDICT.BLOCK, risk: 1, source: 'blocklist', category: 'suspicious_site',
@@ -57,7 +62,9 @@ export function decide({ url, page, userTrusted = [], blocklist }) {
   const reasons = [...urlResult.reasons, ...pageResult.reasons].sort((a, b) => b.weight - a.weight);
   const risk = noisyOr([urlResult.risk, pageResult.risk]);
 
-  const action = risk >= THRESHOLDS.block ? VERDICT.BLOCK : risk >= THRESHOLDS.warn ? VERDICT.WARN : VERDICT.ALLOW;
+  const action = risk >= THRESHOLDS.block ? VERDICT.BLOCK
+    : risk >= THRESHOLDS.review ? VERDICT.REVIEW
+      : VERDICT.ALLOW;
   return {
     ...base,
     action,
@@ -67,6 +74,11 @@ export function decide({ url, page, userTrusted = [], blocklist }) {
     category: action === VERDICT.ALLOW ? null : categorize(reasons),
     reasons,
   };
+}
+
+/** Decision for a destination before it loads (lists + URL checks only). */
+export function decideUrl(url, opts = {}) {
+  return decide({ url, ...opts });
 }
 
 function categorize(reasons) {

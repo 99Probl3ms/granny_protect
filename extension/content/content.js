@@ -1,9 +1,15 @@
-// Content script (classic script, runs in every top-level http(s) page).
-//  1. Extracts a small feature summary of the page and sends it to the
-//     background for a verdict.
-//  2. If the page is risky, shows a warning and locks password / card /
-//     gift-card fields until the user deliberately chooses to continue.
-//  3. Re-checks when the page adds a sensitive field later (single-page apps).
+// Content script (classic script, runs at document_start in every top-level
+// http(s) page).
+//  1. Destination gate: asks the background whether this page should be
+//     showing at all; if it needs review or is blocked, the page is hidden and
+//     the tab goes to the gate page.
+//  2. Link gate: screens the page's links in the background, and holds clicks
+//     (same tab, new tab, Ctrl/middle click, keyboard Enter) on links that
+//     aren't known to be safe until the background has decided.
+//  3. Page screening: once the DOM is ready, sends a feature summary of the
+//     page for a verdict. If the page is risky, shows a warning and locks
+//     password / card / gift-card fields until the user chooses to continue.
+//  4. Re-checks when the page adds sensitive fields or new links later.
 
 (() => {
   if (window.top !== window || window.__grannyProtect) return;
@@ -18,7 +24,10 @@
   const OTP_RE = /one.?time|\botp\b|verification.?code|2fa|auth.?code|sms.?code/i;
   const PHONE_RE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}\b/g;
 
+  const MAX_LINKS_PER_BATCH = 300;
+
   let state = {
+    gated: false,        // destination gate sent this tab to the gate page
     verdict: null,       // last verdict from the background
     text: null,          // plain-language strings for it
     locked: false,       // sensitive inputs blocked until the user decides
@@ -26,6 +35,109 @@
     fullscreen: false,
     rechecks: 0,
   };
+
+  function send(msg) {
+    try {
+      return chrome.runtime.sendMessage(msg).catch(() => null);
+    } catch {
+      return Promise.resolve(null); // extension reloaded
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 1. Destination gate
+
+  send({ type: 'checkPage' }).then((res) => {
+    if (!res?.gated) return;
+    state.gated = true;
+    document.documentElement?.style.setProperty('display', 'none', 'important');
+    window.stop();
+  });
+
+  // -------------------------------------------------------------------------
+  // 2. Link gate
+
+  const decisions = new Map(); // link URL (without #fragment) -> allow | needs_review | block
+  const pendingScreen = new Set();
+
+  function linkKey(u) {
+    return u.origin + u.pathname + u.search;
+  }
+
+  function linkUrl(a) {
+    try {
+      const u = new URL(a.href, location.href);
+      return u.protocol === 'http:' || u.protocol === 'https:' ? u : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** Queue the links under `root` that haven't been screened yet. */
+  function collectLinks(root) {
+    const anchors = root.matches?.('a[href], area[href]') ? [root] : [];
+    if (root.querySelectorAll) anchors.push(...root.querySelectorAll('a[href], area[href]'));
+    for (const a of anchors) {
+      const u = linkUrl(a);
+      if (!u) continue;
+      const key = linkKey(u);
+      if (!decisions.has(key)) pendingScreen.add(key);
+    }
+    scheduleScreen();
+  }
+
+  let screenTimer;
+  function scheduleScreen() {
+    if (!pendingScreen.size) return;
+    clearTimeout(screenTimer);
+    screenTimer = setTimeout(screenLinks, 150);
+  }
+
+  async function screenLinks() {
+    const urls = [...pendingScreen].slice(0, MAX_LINKS_PER_BATCH);
+    for (const u of urls) pendingScreen.delete(u);
+    const res = await send({ type: 'screenUrls', urls });
+    for (const [url, action] of Object.entries(res?.decisions || {})) decisions.set(url, action);
+    scheduleScreen();
+  }
+
+  /** How the user asked to open the link. */
+  function dispositionFor(e, a) {
+    if (e.button === 1 || e.ctrlKey || e.metaKey) return e.shiftKey ? 'tab' : 'background';
+    if (e.shiftKey) return 'window';
+    const target = (a.target || document.querySelector('base[target]')?.target || '').toLowerCase();
+    return target && !['_self', '_top', '_parent'].includes(target) ? 'tab' : 'same';
+  }
+
+  async function navigateChecked(url, disposition) {
+    const res = await send({ type: 'checkNavigation', url, disposition });
+    // If the background is unavailable, fall back to a plain navigation; the
+    // destination gate still runs on the new page.
+    if (!res || (res.allow && !res.handled)) {
+      if (disposition === 'same') location.assign(url);
+      else window.open(url, '_blank', 'noopener');
+    }
+  }
+
+  // Bubble phase on window: runs after the page's own handlers, so links the
+  // page handles itself (single-page-app routing, pop-ups) are left alone.
+  function onLinkActivate(e) {
+    if (e.defaultPrevented) return;
+    if (e.type === 'click' && e.button !== 0) return;
+    if (e.type === 'auxclick' && e.button !== 1) return;
+    const a = e.composedPath().find((n) => n instanceof HTMLAnchorElement || n instanceof HTMLAreaElement);
+    if (!a || a.hasAttribute('download')) return;
+    const u = linkUrl(a);
+    if (!u) return;
+    // Same-document fragment links ("#section") don't navigate.
+    if (linkKey(u) === linkKey(new URL(location.href)) && u.hash) return;
+    if (decisions.get(linkKey(u)) === 'allow') return; // known safe: don't interfere
+    e.preventDefault();
+    navigateChecked(u.href, dispositionFor(e, a));
+  }
+
+  window.addEventListener('click', onLinkActivate);
+  window.addEventListener('auxclick', onLinkActivate);
 
   // -------------------------------------------------------------------------
   // Feature extraction
@@ -104,13 +216,9 @@
   // Talking to the background
 
   async function analyze() {
-    let res;
-    try {
-      res = await chrome.runtime.sendMessage({ type: 'analyzePage', features: extractFeatures() });
-    } catch {
-      return; // extension reloaded / background unavailable
-    }
-    if (!res) return;
+    if (state.gated) return;
+    const res = await send({ type: 'analyzePage', features: extractFeatures() });
+    if (!res || state.gated) return;
     state.verdict = res.verdict;
     state.text = res.text;
     const risky = res.verdict.action !== 'allow' && !res.verdict.overridden;
@@ -160,9 +268,14 @@
     }
   });
 
-  // Re-check when a sensitive field appears later (single-page apps, pop-ups).
+  // Re-check when a sensitive field appears later (single-page apps, pop-ups),
+  // and screen links that are added or change destination.
   let recheckTimer;
   const observer = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.type === 'attributes') collectLinks(m.target);
+      else for (const n of m.addedNodes) if (n.nodeType === 1) collectLinks(n);
+    }
     if (state.rechecks >= MAX_RECHECKS) return;
     const addedSensitive = mutations.some((m) => [...m.addedNodes].some((n) =>
       n.nodeType === 1 && (sensitiveKind(n) || [...(n.querySelectorAll?.('input') || [])].some(sensitiveKind))));
@@ -228,7 +341,7 @@
     root.appendChild(el('style', {}, STYLE));
 
     const backdrop = el('div', {
-      class: `backdrop ${state.verdict.action}`,
+      class: `backdrop ${state.verdict.action === 'block' ? 'block' : 'warn'}`,
       role: 'alertdialog', 'aria-modal': 'true', 'aria-labelledby': 'gp-title',
     });
     const card = el('div', { class: 'card' });
@@ -279,6 +392,18 @@
 
   // -------------------------------------------------------------------------
 
-  analyze();
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  function onDomReady() {
+    if (state.gated) return;
+    collectLinks(document);
+    analyze();
+    observer.observe(document.documentElement, {
+      childList: true, subtree: true, attributes: true, attributeFilter: ['href'],
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onDomReady, { once: true });
+  } else {
+    onDomReady();
+  }
 })();

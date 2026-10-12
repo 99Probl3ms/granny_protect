@@ -44,11 +44,35 @@ const REASONS = {
   forced_fullscreen: 'It took over your whole screen.',
   risky_tld: 'The web address ending is often used by scam sites.',
   free_hosting: 'It\'s on a free website service that scammers often use.',
+  brand_in_path: (d) => `The link mentions ${d}, but it doesn't go to ${d}'s website.`,
+  brand_in_userinfo: (d) => `The web address starts with ${d}'s name to hide where it really goes.`,
+  suspicious_words_in_domain: 'The web address uses words like "login" or "verify" to look official.',
+};
+
+// For destinations we couldn't confirm either way ("needs_review"). Softer:
+// there are warning signs, not proof.
+const REVIEW_HEADLINES = {
+  credential_phish: (brand) => brand
+    ? `This website might be pretending to be ${brand}.`
+    : "We couldn't confirm this website is safe.",
+  tech_support_scam: () => 'This page may be a fake computer warning.',
+  payment_scam: () => 'This page may be a scam asking for money.',
+  suspicious_site: () => "We couldn't confirm this website is safe.",
+};
+
+const REVIEW_ADVICE = {
+  credential_phish: (brand) => brand
+    ? `If you meant to visit ${brand}, it's safer to go there the way you normally do. Don't type your password here unless you're sure.`
+    : "If you weren't expecting this website, go back. Don't type passwords or card numbers here unless you're sure.",
+  tech_support_scam: ADVICE.tech_support_scam,
+  payment_scam: ADVICE.payment_scam,
+  suspicious_site: () => "It has some warning signs. If you weren't expecting to visit it, go back.",
 };
 
 /** Build user-facing text from a verdict. */
 export function describe(verdict) {
   const cat = verdict.category || 'suspicious_site';
+  const review = verdict.action === 'needs_review';
   const reasons = [];
   for (const r of verdict.reasons || []) {
     const t = REASONS[r.code];
@@ -58,8 +82,8 @@ export function describe(verdict) {
     if (reasons.length >= 3) break;
   }
   return {
-    headline: HEADLINES[cat](verdict.brand),
-    advice: ADVICE[cat](verdict.brand),
+    headline: (review ? REVIEW_HEADLINES : HEADLINES)[cat](verdict.brand),
+    advice: (review ? REVIEW_ADVICE : ADVICE)[cat](verdict.brand),
     reasons,
   };
 }

@@ -154,6 +154,21 @@ test('ordinary login page on an unknown site is allowed', () => {
   assert.equal(r.action, 'allow', JSON.stringify(r));
 });
 
+test('ordinary login page over plain http is allowed', () => {
+  const url = 'http://old-family-site.net/login';
+  const r = decide({
+    url,
+    page: page({
+      url,
+      title: 'Family photos - Sign in',
+      fields: { password: 1, card: 0, ssn: 0, giftCard: 0, otp: 0 },
+      forms: [{ actionHost: 'old-family-site.net', hasPassword: true }],
+      text: 'Sign in to see the family photo album.',
+    }),
+  });
+  assert.equal(r.action, 'allow', JSON.stringify(r));
+});
+
 test('online shop checkout on an unknown site is allowed', () => {
   const r = decide({
     url: 'https://handmade-quilts.com/checkout',
