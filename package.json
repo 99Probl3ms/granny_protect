@@ -9,6 +9,7 @@
     "test:policy": "node --test e2e/password-policy.mjs",
     "test:e2e": "node e2e/smoke.mjs && node e2e/navigation.mjs && node e2e/review.mjs && node e2e/dnr-regex-limits.mjs && npm run test:policy",
     "eval": "node scripts/eval.mjs",
+    "eval:jev": "node scripts/eval-jev.mjs",
     "review-server": "node server/server.mjs",
     "test:jev": "node e2e/jev-live.mjs"
   }
