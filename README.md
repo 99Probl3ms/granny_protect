@@ -3,9 +3,10 @@
 A Chrome extension that warns people, especially less technical users, before
 they type a password, card number or gift-card code into a scam website.
 
-> **Status: proof of concept.** All checking runs on the device. The fast
-> decision model (TypeSafe's Jev) and the backend described in
-> [ARCHITECTURE.md](ARCHITECTURE.md) are not connected yet.
+> **Status: proof of concept.** Local checks run on the device. Sites the
+> local checks can't decide ("needs review") can be sent, sanitized, to a
+> review service (`server/`) that will ask TypeSafe's Jev; the Jev call itself
+> is not implemented yet, so for now those sites stay held for review.
 
 ## What it does
 
@@ -65,9 +66,19 @@ Requires Chrome 116 or later.
 
 ## Privacy
 
-All checks happen in the browser. No page content, address or browsing history
-leaves the device. The only network request the extension makes itself is a
-download of the public OpenPhish list of scam addresses.
+Local checks happen in the browser. The extension downloads the public
+OpenPhish list of scam addresses, and sends only "needs review" destinations
+to the review service, sanitized (`extension/lib/sanitize.js`):
+
+- **Sent:** the destination's host, its path with identifiers, numbers and
+  email addresses replaced (`/reset/[id]`), the local warning signs, and for a
+  loaded page a redacted title and text excerpt (at most 1,500 characters),
+  counts of sensitive fields, and the hosts its forms post to.
+- **Never sent:** query strings, fragments, `user:password@` parts, anything
+  typed into the page, cookies.
+
+The review service re-checks and re-sanitizes every request before passing it
+on. In production it is meant to run on-premises.
 
 ## Development
 
@@ -91,6 +102,7 @@ extension/
     ├── fusion.js          combines checks into allow / needs_review / block
     ├── score.js           score combination helper
     └── messages.js        plain-language warning text
+server/                    review service: holds the Jev key, re-sanitizes, calls Jev
 tests/                     unit tests (node:test) and the destination test set
 scripts/eval.mjs           confusion matrix for the destination test set
 e2e/                       Playwright tests: smoke test, navigation matrix, test pages
@@ -138,6 +150,27 @@ To tune detection, adjust the weights in `lib/urlHeuristics.js` and
 `lib/pageHeuristics.js` or the thresholds in `lib/fusion.js`, then run the
 tests.
 
+### Review service (Jev)
+
+```sh
+TYPESAFE_API_KEY=... npm run review-server   # http://127.0.0.1:8787/review
+```
+
+The extension posts sanitized requests for `needs_review` destinations to
+`http://127.0.0.1:8787/review` by default. The address, timeout and an on/off
+switch live in `chrome.storage.local` (`reviewEndpoint`, `reviewTimeoutMs`,
+`reviewEnabled`).
+
+- **Link clicks** wait up to 1.5 s for a review. The **gate page** asks for one
+  and continues automatically when it comes back "allow". Other navigation
+  checks only use cached reviews, so they never add delay.
+- Only a valid review with confidence ≥ 0.8 changes the decision. A timeout,
+  an error or an invalid response leaves the destination held for review.
+- Reviews are cached for 30 minutes and identical requests in flight share one
+  call. Reviews never change `allow`, `block` or policy decisions.
+- `server/models/jev.mjs` is the Jev adapter. **It is not implemented yet**: it
+  needs TypeSafe's API reference, and until then it refuses to run.
+
 ### Tests
 
 Node 20 or later.
@@ -145,7 +178,7 @@ Node 20 or later.
 ```sh
 npm test            # unit tests, including every entry in the destination test set
 npm run eval        # confusion matrix for the destination test set
-npm run test:e2e    # loads the extension in Chromium: smoke test + navigation matrix
+npm run test:e2e    # loads the extension in Chromium: smoke test, navigation matrix, review flows
 ```
 
 The destination test set (`tests/fixtures/destinations.js`) holds malicious,

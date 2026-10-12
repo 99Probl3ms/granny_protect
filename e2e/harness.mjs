@@ -77,7 +77,7 @@ export async function launch(port) {
       '--no-proxy-server',
       `--disable-extensions-except=${extensionDir}`,
       `--load-extension=${extensionDir}`,
-      `--host-resolver-rules=MAP * 127.0.0.1:${port}`,
+      `--host-resolver-rules=MAP * 127.0.0.1:${port}, EXCLUDE 127.0.0.1`,
     ],
   });
   let [worker] = context.serviceWorkers();

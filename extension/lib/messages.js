@@ -47,6 +47,7 @@ const REASONS = {
   forced_fullscreen: 'It took over your whole screen.',
   risky_tld: 'The web address ending is often used by scam sites.',
   free_hosting: 'It\'s on a free website service that scammers often use.',
+  remote_review_block: 'Our safety check confirmed this website is very likely a scam.',
   password_on_http_page: 'This page isn\'t encrypted (http), so a password typed here could be read by others.',
   password_sent_over_http: 'This page would send your password without encryption (http).',
   brand_in_path: (d) => `The link mentions ${d}, but it doesn't go to ${d}'s website.`,

@@ -23,6 +23,8 @@ import { decide, VERDICT } from './lib/fusion.js';
 import { describe } from './lib/messages.js';
 import { normalizeHost, registrableDomain } from './lib/domain.js';
 import { allowRule, buildBlockRules, coveredByRules } from './lib/dnrRules.js';
+import { buildReviewRequest } from './lib/sanitize.js';
+import { applyReview, createReviewer } from './lib/reviewClient.js';
 
 const FEED_URL = 'https://openphish.com/feed.txt';
 const FEED_ALARM = 'refresh-blocklist';
@@ -83,6 +85,40 @@ async function evaluate(url, page, allowed) {
 }
 
 const isGated = (verdict) => verdict.action !== VERDICT.ALLOW && !verdict.overridden;
+
+// ---------------------------------------------------------------------------
+// Remote review (Jev, through the review service in server/). Only
+// needs_review destinations are sent, sanitized (lib/sanitize.js). If the
+// service is off, slow or returns something invalid, the local decision
+// stands and the destination stays gated.
+
+const REVIEW_DEFAULTS = { reviewEnabled: true, reviewEndpoint: 'http://127.0.0.1:8787/review', reviewTimeoutMs: 1500 };
+let reviewer;
+let reviewerKey;
+
+async function getReviewer() {
+  const cfg = { ...REVIEW_DEFAULTS, ...(await chrome.storage.local.get(Object.keys(REVIEW_DEFAULTS))) };
+  if (!cfg.reviewEnabled || !cfg.reviewEndpoint) return null;
+  const key = `${cfg.reviewEndpoint}|${cfg.reviewTimeoutMs}`;
+  if (key !== reviewerKey) {
+    reviewer = createReviewer({ endpoint: cfg.reviewEndpoint, timeoutMs: cfg.reviewTimeoutMs });
+    reviewerKey = key;
+  }
+  return reviewer;
+}
+
+/**
+ * Upgrade a needs_review verdict with a remote review.
+ * `wait: false` uses only a cached review (no network, no delay).
+ */
+async function withReview(url, verdict, { page, wait = true } = {}) {
+  if (verdict.action !== VERDICT.REVIEW || verdict.policy || verdict.overridden) return verdict;
+  const r = await getReviewer();
+  if (!r) return verdict;
+  const request = buildReviewRequest(url, verdict, page);
+  const review = wait ? await r.review(request) : r.peek(request);
+  return review ? applyReview(verdict, review) : verdict;
+}
 
 // ---------------------------------------------------------------------------
 // declarativeNetRequest: block listed sites before the request is sent.
@@ -200,7 +236,7 @@ async function openAs(disposition, url, sender) {
 // content script didn't see.
 chrome.webNavigation.onBeforeNavigate.addListener(async ({ tabId, frameId, url }) => {
   if (frameId !== 0 || !/^https?:/.test(url)) return;
-  const verdict = await evaluate(url);
+  const verdict = await withReview(url, await evaluate(url), { wait: false });
   if (!isGated(verdict) || await handledByRules(url, verdict)) return;
   await gateTab(tabId, url, verdict);
 });
@@ -209,7 +245,7 @@ chrome.webNavigation.onBeforeNavigate.addListener(async ({ tabId, frameId, url }
 // address.
 chrome.webRequest.onBeforeRedirect.addListener(async ({ tabId, redirectUrl }) => {
   if (tabId < 0 || !/^https?:/.test(redirectUrl)) return;
-  const verdict = await evaluate(redirectUrl);
+  const verdict = await withReview(redirectUrl, await evaluate(redirectUrl), { wait: false });
   if (!isGated(verdict) || await handledByRules(redirectUrl, verdict)) return;
   await gateTab(tabId, redirectUrl, verdict);
 }, { urls: ['<all_urls>'], types: ['main_frame'] });
@@ -225,7 +261,7 @@ const handlers = {
   // Content script, at document_start: should this page be showing at all?
   async checkPage(msg, sender) {
     if (!sender.tab || sender.frameId !== 0) return { gated: false };
-    const verdict = await evaluate(sender.url);
+    const verdict = await withReview(sender.url, await evaluate(sender.url), { wait: false });
     if (!isGated(verdict)) return { gated: false };
     await gateTab(sender.tab.id, sender.url, verdict);
     return { gated: true };
@@ -238,7 +274,7 @@ const handlers = {
     const decisions = {};
     const allowed = await sessionAllowed();
     for (const url of urls) {
-      const verdict = await evaluate(url, undefined, allowed);
+      const verdict = await withReview(url, await evaluate(url, undefined, allowed), { wait: false });
       decisions[url] = verdict.overridden ? VERDICT.ALLOW : verdict.action;
     }
     return { decisions };
@@ -252,7 +288,7 @@ const handlers = {
     const { url } = msg;
     const disposition = ['same', 'tab', 'background', 'window'].includes(msg.disposition) ? msg.disposition : 'same';
     if (!/^https?:/.test(url)) return { allow: false };
-    const verdict = await evaluate(url);
+    const verdict = await withReview(url, await evaluate(url));
     if (!isGated(verdict)) {
       if (disposition === 'same') return { allow: true };
       await openAs(disposition, url, sender);
@@ -271,14 +307,15 @@ const handlers = {
     if (!sender.tab || sender.frameId !== 0) return null;
     // Judge the URL the browser reports for this frame, not one the page claims.
     const url = sender.url;
-    const verdict = await evaluate(url, { ...msg.features, url });
+    const page = { ...msg.features, url };
+    const verdict = await withReview(url, await evaluate(url, page), { page });
     await rememberVerdict(sender.tab.id, url, verdict);
     return { verdict, text: describe(verdict) };
   },
 
   // Gate page: why was this URL gated?
   async describeUrl(msg) {
-    const verdict = await evaluate(msg.url);
+    const verdict = await withReview(msg.url, await evaluate(msg.url));
     return { verdict, text: describe(verdict) };
   },
 
