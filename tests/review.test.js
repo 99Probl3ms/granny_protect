@@ -48,6 +48,14 @@ test('page summaries are redacted and capped, typed values never included', () =
   assert.notEqual(reviewKey(req), reviewKey(buildReviewRequest(url, decideUrl(url))));
 });
 
+test('percent-encoded identifiers in paths are redacted after decoding', () => {
+  assert.equal(redactPath('/u/jane.doe%40example.com/x'), '/u/[email]/x');
+  assert.equal(redactPath('/call/%2B1%20888%20555%200199'), '/call/[phone]');
+  assert.equal(redactPath('/acct/12%33%345'), '/acct/[number]');
+  assert.equal(redactPath('/a/%2540example.com'), '/a/[id]', 'double-encoded');
+  assert.equal(redactPath('/a%ZZ/b'), '/[id]/b', 'malformed');
+});
+
 test('redaction keeps ordinary words', () => {
   assert.equal(redactPath('/products/blue-quilt'), '/products/blue-quilt');
   assert.equal(redactText('Your account has been limited', 100), 'Your account has been limited');

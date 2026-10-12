@@ -35,12 +35,17 @@ export function redactText(text, max) {
 /** Path with identifiers redacted, no query or fragment. */
 export function redactPath(pathname) {
   const segments = String(pathname || '/').split('/').map((seg) => {
-    let s = seg;
+    // Decode once before matching personal data. Drop malformed or
+    // double-encoded segments rather than forward a hidden identifier.
+    let s;
     try {
       s = decodeURIComponent(seg);
-    } catch { /* keep as is */ }
+    } catch {
+      return '[id]';
+    }
+    if (s.includes('%')) return '[id]';
     if (IS_EMAIL.test(s)) return '[email]';
-    return s.replace(TOKEN_RE, '[id]').replace(DIGITS_RE, '[number]');
+    return s.replace(TOKEN_RE, '[id]').replace(PHONE_RE, '[phone]').replace(DIGITS_RE, '[number]');
   });
   const path = segments.join('/');
   return path.length > LIMITS.path ? `${path.slice(0, LIMITS.path)}…` : path;
