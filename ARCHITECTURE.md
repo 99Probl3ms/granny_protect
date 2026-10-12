@@ -289,9 +289,10 @@ Cloudflare Worker or Vercel function.
 
 ## 11. Tier 3 implementation notes
 
-- **Jev API.** The backend calls `POST https://openrouter.ai/api/alpha/decisions`
-  with `{ model: "typesafe/jev-1.13", state: { page: summary }, questions }`
-  and one request carries all three questions (`phish` Noul, `category`
+- **Jev API.** The backend calls `POST https://api.typesafe.ai/v1/systemone`
+  ([docs](https://docs.typesafe.ai/api)) with
+  `{ model: "jev-1.13.0", state: { page: summary }, questions }` (OpenRouter's
+  decisions API is supported as a fallback). One request carries all three questions (`phish` Noul, `category`
   Choice, `pressure` Score). See `backend/README.md`.
 - **Code layout.** The repo stayed plain JavaScript with no build step, so the
   files are `extension/lib/{summary,apiClient,tier3,config}.js` and

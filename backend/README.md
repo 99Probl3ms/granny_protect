@@ -4,7 +4,7 @@ A small, stateless service that holds the Jev API key and answers one question
 for the extension: is this page trying to trick the user?
 
 ```
-extension ──POST /classify {summary}──▶ backend ──POST decisions──▶ Jev (typesafe/jev-1.13 via OpenRouter)
+extension ──POST /classify {summary}──▶ backend ──POST /v1/systemone──▶ Jev (jev-1.13.0, api.typesafe.ai)
           ◀── {p_phish, category, category_confidence, pressure, model} ──
 ```
 
@@ -13,7 +13,7 @@ No dependencies. Node 20+ or Cloudflare Workers.
 ## Run locally
 
 ```sh
-JEV_API_KEY=sk-or-... npm run backend          # http://localhost:8787
+TYPESAFE_API_KEY=... npm run backend          # http://localhost:8787
 ```
 
 Then point the extension at it: open `chrome://extensions`, click the
@@ -29,16 +29,17 @@ extension runs on Tiers 0-2 only.
 
 | Variable | Default | |
 |---|---|---|
-| `JEV_API_KEY` | (none) | OpenRouter key with access to `typesafe/jev`. Without it `/classify` answers 503. |
-| `JEV_API_URL` | `https://openrouter.ai/api/alpha/decisions` | |
-| `JEV_MODEL` | `typesafe/jev-1.13` | Pinned; the fusion weights are tuned against it. |
+| `TYPESAFE_API_KEY` | (none) | TypeSafe key; calls `https://api.typesafe.ai/v1/systemone` directly. |
+| `OPENROUTER_API_KEY` | (none) | Used only if there is no TypeSafe key; calls Jev through OpenRouter. With neither key `/classify` answers 503. |
+| `JEV_API_URL` | the provider's endpoint | |
+| `JEV_MODEL` | `jev-1.13.0` (`typesafe/jev-1.13` on OpenRouter) | Pinned rather than `jev-latest`, so a new Jev release can't silently shift the tuned thresholds. |
 | `TIER3_DISABLED` | | `1` = kill switch. Extensions back off for 10 minutes and use heuristics only. |
 | `RATE_PER_MINUTE` | `60` | Per install ID (in memory). |
 | `DECISION_LOG` | stdout | File to append JSON-lines decision logs to. |
 | `PORT` | `8787` | |
 
-On Cloudflare, deploy `worker.js` and set `JEV_API_KEY` with
-`wrangler secret put JEV_API_KEY`.
+On Cloudflare, deploy `worker.js` and set the key with
+`wrangler secret put TYPESAFE_API_KEY`.
 
 ## API
 

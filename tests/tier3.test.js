@@ -6,7 +6,7 @@ import { applyModel, decide, THRESHOLDS } from '../extension/lib/fusion.js';
 import { describe } from '../extension/lib/messages.js';
 import { classifyRemote, ModelDisabledError } from '../extension/lib/apiClient.js';
 import { createTier3 } from '../extension/lib/tier3.js';
-import { buildRequest, createJevModel, parseResponse, QUESTIONS } from '../backend/src/jev.js';
+import { buildRequest, createJevModel, jevConfigFromEnv, parseResponse, QUESTIONS } from '../backend/src/jev.js';
 import { createHandler, createRateLimiter } from '../backend/src/handler.js';
 
 const INSTALL_ID = '0b9f6c1e-7a3d-4c1b-9e2f-5d8a6b4c3e21';
@@ -221,7 +221,7 @@ test('tier3 gray-zone mode only asks about uncertain pages', () => {
 // --- Jev adapter --------------------------------------------------------------
 
 const JEV_RESPONSE = {
-  model: 'typesafe/jev-1.13-20260917',
+  model: 'jev-1.13.0',
   answers: {
     phish: { type: 'noul', noul: 0.97 },
     category: { type: 'choice', choice: 'credential_phish', probabilities: { credential_phish: 0.9 }, confidence: 0.85 },
@@ -233,7 +233,7 @@ const JEV_RESPONSE = {
 test('Jev request uses noul, choice and score questions over the summary', () => {
   const summary = sanitizeSummary({ url_host: 'a.example' });
   const req = buildRequest(summary);
-  assert.equal(req.model, 'typesafe/jev-1.13');
+  assert.equal(req.model, 'jev-1.13.0');
   assert.deepEqual(req.state, { page: summary });
   assert.equal(QUESTIONS.phish.type, 'noul');
   assert.equal(QUESTIONS.category.type, 'choice');
@@ -245,7 +245,7 @@ test('Jev request uses noul, choice and score questions over the summary', () =>
 test('Jev response parsing', () => {
   assert.deepEqual(parseResponse(JEV_RESPONSE), {
     p_phish: 0.97, category: 'credential_phish', category_confidence: 0.85, pressure: 2.4,
-    model: 'typesafe/jev-1.13-20260917',
+    model: 'jev-1.13.0',
   });
   assert.equal(parseResponse({ answers: { phish: { noul: 0.1 }, category: { choice: 'made_up' } } }).category, 'benign');
   assert.throws(() => parseResponse({ answers: {} }));
@@ -258,13 +258,24 @@ test('Jev adapter sends the key as a bearer token', async () => {
     fetch: async (url, init) => { seen = { url, init }; return Response.json(JEV_RESPONSE); },
   });
   const r = await model.classify(sanitizeSummary({ url_host: 'a.example' }));
-  assert.equal(seen.url, 'https://openrouter.ai/api/alpha/decisions');
+  assert.equal(seen.url, 'https://api.typesafe.ai/v1/systemone');
   assert.equal(seen.init.headers.authorization, 'Bearer test-key');
   assert.equal(r.p_phish, 0.97);
   assert.equal(r.usage.input_tokens, 500);
 
   const failing = createJevModel({ apiKey: 'k', fetch: async () => new Response('nope', { status: 401 }) });
   await assert.rejects(failing.classify({}), /401/);
+});
+
+test('Jev provider comes from the environment, TypeSafe direct first', () => {
+  assert.equal(jevConfigFromEnv({}), null);
+  assert.deepEqual(jevConfigFromEnv({ TYPESAFE_API_KEY: 'ts', OPENROUTER_API_KEY: 'or' }), {
+    provider: 'typesafe', apiKey: 'ts', url: 'https://api.typesafe.ai/v1/systemone', model: 'jev-1.13.0',
+  });
+  assert.deepEqual(jevConfigFromEnv({ OPENROUTER_API_KEY: 'or' }), {
+    provider: 'openrouter', apiKey: 'or', url: 'https://openrouter.ai/api/alpha/decisions', model: 'typesafe/jev-1.13',
+  });
+  assert.equal(jevConfigFromEnv({ TYPESAFE_API_KEY: 'ts', JEV_MODEL: 'jev-latest' }).model, 'jev-latest');
 });
 
 // --- backend handler ----------------------------------------------------------

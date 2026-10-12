@@ -1,16 +1,36 @@
 // Jev adapter: implements the DecisionModel interface (see decisionModel.js)
-// on TypeSafe's Jev decision model via the OpenRouter decisions API.
+// on TypeSafe's Jev decision model, called either directly at TypeSafe
+// (https://docs.typesafe.ai/api) or through OpenRouter. Both take the same request:
 //
-//   POST {url}  { model, state, questions }  ->  { model, answers, usage, id }
+//   POST {url}  { model, state, questions }  ->  { model, answers, usage }
 //
 // Jev answers only from the options we define (a probability, a choice or a
 // score), never free text, so text on the page can at most skew a number.
 // Question keys are not sent to the model; the meaning is all in
 // `instructions` and `criteria`.
 
-export const DEFAULT_JEV_URL = 'https://openrouter.ai/api/alpha/decisions';
-// Pinned: thresholds in the extension are tuned against this version.
-export const DEFAULT_JEV_MODEL = 'typesafe/jev-1.13';
+// Model versions are pinned: thresholds in the extension are tuned against them.
+export const PROVIDERS = {
+  typesafe: { url: 'https://api.typesafe.ai/v1/systemone', model: 'jev-1.13.0', keyEnv: 'TYPESAFE_API_KEY' },
+  openrouter: { url: 'https://openrouter.ai/api/alpha/decisions', model: 'typesafe/jev-1.13', keyEnv: 'OPENROUTER_API_KEY' },
+};
+export const DEFAULT_JEV_URL = PROVIDERS.typesafe.url;
+export const DEFAULT_JEV_MODEL = PROVIDERS.typesafe.model;
+
+/**
+ * Pick the provider from environment variables. TYPESAFE_API_KEY (direct) is
+ * preferred over OPENROUTER_API_KEY; JEV_API_URL / JEV_MODEL override the
+ * provider's defaults. Returns null when no key is set.
+ * @param {Record<string, string|undefined>} env
+ * @returns {{provider:string, apiKey:string, url:string, model:string}|null}
+ */
+export function jevConfigFromEnv(env) {
+  for (const [provider, { url, model, keyEnv }] of Object.entries(PROVIDERS)) {
+    const apiKey = env[keyEnv];
+    if (apiKey) return { provider, apiKey, url: env.JEV_API_URL || url, model: env.JEV_MODEL || model };
+  }
+  return null;
+}
 
 export const CATEGORIES = {
   credential_phish:
