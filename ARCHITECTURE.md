@@ -274,10 +274,13 @@ Cloudflare Worker or Vercel function.
 
 ---
 
-## 10. Open questions
+## 10. POC decisions
 
-- Which browsers are in scope for v1? (Chrome + Edge share MV3; Firefox needs
-  small manifest tweaks; Safari needs an Xcode wrapper.)
-- Who installs and configures it: the user, or a family member remotely?
-- Budget per user per month for Jev and domain-intel lookups?
-- Store-review risk around `<all_urls>`; prepare a clear justification.
+- **Browser: Chrome first.** Load-unpacked install for testing, the most mature
+  MV3 docs and tooling, and the same build runs on Edge. Firefox/Safari later.
+- **Installer: the user themself.** Onboarding must be one screen: what it does,
+  what data leaves the device, done. No family-managed settings in the POC; the
+  trusted-contact alert is optional and set up by the user.
+- **Budget: not a constraint for the POC.** Call Jev on every page that isn't on
+  the allowlist (not just the gray zone) so we can measure how it does against
+  the heuristics alone. Re-tighten to gray-zone-only before any wider release.
